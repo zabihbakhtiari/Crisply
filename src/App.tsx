@@ -8,6 +8,15 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
+import Notifications from "./pages/Notifications";
+import Notes from "./pages/Notes";
+import Tasks from "./pages/Tasks";
+import Emails from "./pages/Emails";
+import Calendars from "./pages/Calendars";
+import Analytics from "./pages/Analytics";
+import Contacts from "./pages/Contacts";
+import Companies from "./pages/Companies";
+import Integrations from "./pages/Integrations";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +30,15 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/notes" element={<Notes />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/emails" element={<Emails />} />
+          <Route path="/calendars" element={<Calendars />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/contacts" element={<Contacts />} />
+          <Route path="/companies" element={<Companies />} />
+          <Route path="/integrations" element={<Integrations />} />
           <Route path="/settings" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
