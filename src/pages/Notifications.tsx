@@ -56,14 +56,14 @@ const Notifications = () => {
           <Button 
             variant="outline" 
             size="sm" 
-            className="dark:text-white dark:hover:bg-gray-800 dark:hover:text-white dark:border-gray-600"
+            className="dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500"
           >
             Mark all as read
           </Button>
           <Button 
             variant="outline" 
             size="sm" 
-            className="dark:text-white dark:hover:bg-gray-800 dark:hover:text-white dark:border-gray-600"
+            className="dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500"
             onClick={() => setIsSettingsOpen(true)}
           >
             <SettingsIcon className="h-4 w-4 mr-1" />
@@ -77,28 +77,28 @@ const Notifications = () => {
           <Card 
             key={notification.id} 
             className={`${notification.read 
-              ? 'bg-white dark:bg-gray-800' 
-              : 'bg-blue-50 dark:bg-blue-950 border-l-4 border-l-blue-500'}`}
+              ? 'bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-750' 
+              : 'bg-blue-50 hover:bg-blue-100 dark:bg-gray-800/95 dark:hover:bg-gray-750 border-l-4 border-l-blue-500'}`}
           >
             <CardHeader className="flex flex-row items-start gap-4 pb-2">
               <div className={`p-2 rounded-full ${
                 notification.read 
-                  ? 'bg-gray-100 dark:bg-gray-700' 
-                  : 'bg-blue-100 dark:bg-blue-900'
+                  ? 'bg-gray-100 dark:bg-gray-700 dark:group-hover:bg-gray-600' 
+                  : 'bg-blue-100 dark:bg-gray-700 dark:group-hover:bg-gray-600'
               }`}>
                 <Bell 
                   size={16} 
                   className={notification.read 
-                    ? 'text-gray-500 dark:text-white' 
-                    : 'text-blue-500 dark:text-white'} 
+                    ? 'text-gray-500 dark:text-gray-300' 
+                    : 'text-blue-500 dark:text-gray-300'} 
                 />
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-base dark:text-white">{notification.title}</CardTitle>
-                  <span className="text-xs text-gray-500 dark:text-gray-300">{notification.time}</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{notification.time}</span>
                 </div>
-                <CardDescription className="mt-1 dark:text-white">{notification.description}</CardDescription>
+                <CardDescription className="mt-1 dark:text-gray-300">{notification.description}</CardDescription>
               </div>
             </CardHeader>
             <CardContent className="pt-0 flex justify-end">
@@ -106,7 +106,7 @@ const Notifications = () => {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-xs dark:text-white dark:hover:bg-gray-700 dark:hover:text-white"
+                  className="text-xs dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white"
                 >
                   <CheckCircle className="mr-1 h-3 w-3" />
                   Mark as read
@@ -118,7 +118,7 @@ const Notifications = () => {
       </div>
 
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="sm:max-w-md dark:bg-gray-800">
+        <DialogContent className="sm:max-w-md dark:bg-gray-800 dark:border-gray-700">
           <DialogHeader>
             <DialogTitle className="dark:text-white">Notification Settings</DialogTitle>
             <DialogDescription className="dark:text-gray-400">
@@ -126,57 +126,57 @@ const Notifications = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between dark:hover:bg-gray-750 p-2 rounded-lg">
               <div className="space-y-0.5">
-                <Label>Email Notifications</Label>
+                <Label className="dark:text-white">Email Notifications</Label>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Receive notifications via email
                 </p>
               </div>
-              <Switch defaultChecked />
+              <Switch className="dark:bg-gray-600 dark:data-[state=checked]:bg-gray-400" defaultChecked />
             </div>
-            <Separator />
-            <div className="flex items-center justify-between">
+            <Separator className="dark:bg-gray-700" />
+            <div className="flex items-center justify-between dark:hover:bg-gray-750 p-2 rounded-lg">
               <div className="space-y-0.5">
-                <Label>Push Notifications</Label>
+                <Label className="dark:text-white">Push Notifications</Label>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Receive browser push notifications
                 </p>
               </div>
-              <Switch defaultChecked />
+              <Switch className="dark:bg-gray-600 dark:data-[state=checked]:bg-gray-400" defaultChecked />
             </div>
-            <Separator />
-            <div className="flex items-center justify-between">
+            <Separator className="dark:bg-gray-700" />
+            <div className="flex items-center justify-between dark:hover:bg-gray-750 p-2 rounded-lg">
               <div className="space-y-0.5">
-                <Label>Notification Sound</Label>
+                <Label className="dark:text-white">Notification Sound</Label>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Play sound for new notifications
                 </p>
               </div>
-              <Switch />
+              <Switch className="dark:bg-gray-600 dark:data-[state=checked]:bg-gray-400" />
             </div>
-            <Separator />
-            <div className="flex items-center justify-between">
+            <Separator className="dark:bg-gray-700" />
+            <div className="flex items-center justify-between dark:hover:bg-gray-750 p-2 rounded-lg">
               <div className="space-y-0.5">
-                <Label>Desktop Notifications</Label>
+                <Label className="dark:text-white">Desktop Notifications</Label>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Show notifications on desktop
                 </p>
               </div>
-              <Switch defaultChecked />
+              <Switch className="dark:bg-gray-600 dark:data-[state=checked]:bg-gray-400" defaultChecked />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="dark:border-t dark:border-gray-700">
             <Button 
               variant="outline" 
               onClick={() => setIsSettingsOpen(false)}
-              className="dark:text-white dark:hover:bg-gray-700 dark:hover:text-white dark:border-gray-600"
+              className="dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500"
             >
               Cancel
             </Button>
             <Button 
               onClick={() => setIsSettingsOpen(false)}
-              className="dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"
+              className="dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white dark:border-gray-600"
             >
               Save Changes
             </Button>
