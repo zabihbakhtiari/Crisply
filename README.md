@@ -1,152 +1,73 @@
-# Crisply - Business Analytics Dashboard
+# Welcome to your Lovable project
 
-## Overview
-Crisply is a comprehensive business analytics dashboard designed to help teams track essential KPIs, monitor user activity, and manage subscriptions in one centralized platform. The dashboard provides real-time data visualization with intuitive navigation and a clean, modern interface.
+## Project info
 
-## Features
-- **Real-time Analytics Dashboard**: Track revenue, subscriptions, active users, and conversion rates
-- **Performance Metrics**: View month-over-month growth with percentage indicators
-- **User Activity Monitoring**: Real-time notifications of new user registrations
-- **Database Management**: Access contacts, companies, and integration settings
-- **Team Collaboration**: Supports team-based workflows with shared access
+**URL**: https://lovable.dev/projects/f8ed0689-cdd6-404b-9c49-43950b911477
 
-## Tech Stack
-- **Frontend**: React.js with TypeScript
-- **Styling**: Tailwind CSS for responsive design
-- **Build Tool**: Vite for fast development and optimized production builds
-- **State Management**: React Context API / Redux (optional)
-- **Charts**: D3.js or Recharts for interactive data visualization
-- **Backend**: Node.js API architecture (if applicable)
-- **Database**: MongoDB for flexible data storage (if applicable)
+## How can I edit this code?
 
-## Project Structure
-```
-CRISPLY/
-├── node_modules/
-├── public/
-├── src/
-│   ├── components/       # Reusable UI components
-│   ├── hooks/            # Custom React hooks
-│   ├── lib/              # Utility functions and services
-│   ├── pages/            # Page components
-│   ├── App.css           # Global styles
-│   ├── App.tsx           # Main application component
-│   ├── index.css         # Entry point styles
-│   ├── main.tsx          # Entry point
-│   └── vite-env.d.ts     # TypeScript environment declarations
-├── .gitignore            # Git ignore file
-├── bun.lockb             # Bun lock file (package manager)
-├── components.json       # Component configurations
-├── eslint.config.js      # ESLint configuration
-├── index.html            # HTML entry point
-├── package-lock.json     # NPM lock file
-├── package.json          # Project dependencies and scripts
-├── postcss.config.js     # PostCSS configuration
-├── README.md             # Project documentation
-├── tailwind.config.ts    # Tailwind CSS configuration
-├── tsconfig.app.json     # TypeScript configuration for app
-├── tsconfig.json         # Main TypeScript configuration
-├── tsconfig.node.json    # TypeScript configuration for Node
-└── vite.config.ts        # Vite configuration
-```
+There are several ways of editing your application.
 
-## Installation
+**Use Lovable**
 
-```bash
-# Clone the repository
-git clone git@github.com:zabihbakhtiari/sidebar-profile-flow.git
+Simply visit the [Lovable Project](https://lovable.dev/projects/f8ed0689-cdd6-404b-9c49-43950b911477) and start prompting.
 
-# Navigate to project directory
-cd crisply
+Changes made via Lovable will be committed automatically to this repo.
 
-# Install dependencies using npm
-npm install
-# Or using bun
-bun install
+**Use your preferred IDE**
 
-# Run development server
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+Follow these steps:
+
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
+
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
+
+# Step 3: Install the necessary dependencies.
+npm i
+
+# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
-# Or using bun
-bun run dev
 ```
 
-## Development
+**Edit a file directly in GitHub**
 
-### Available Scripts
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run preview` - Preview production build locally
+**Use GitHub Codespaces**
 
-### Environment Setup
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-Create a `.env` file in the root directory:
+## What technologies are used for this project?
 
-```
-VITE_API_URL=your_api_url
-VITE_APP_ENV=development
-```
+This project is built with:
 
-## Dashboard Components
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-The Crisply dashboard includes:
+## How can I deploy this project?
 
-1. **Sidebar Navigation**
-   - Dashboard
-   - Notifications
-   - Notes
-   - Tasks
-   - Emails
-   - Calendars
-   - Database section (Analytics, Contacts, Companies, Integrations, Settings)
-   - Marketing Team's section
+Simply open [Lovable](https://lovable.dev/projects/f8ed0689-cdd6-404b-9c49-43950b911477) and click on Share -> Publish.
 
-2. **KPI Cards**
-   - Total Revenue ($45,231.89)
-   - Subscriptions (+2350)
-   - Active Users (12,234)
-   - Conversion Rate (2.4%)
+## Can I connect a custom domain to my Lovable project?
 
-3. **Overview Section**
-   - Monthly analytics and stats visualization
-   - Data charts for key metrics
+Yes it is!
 
-4. **Recent Activity Feed**
-   - Real-time notifications
-   - User registration tracking
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-## Contributing
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## Deployment
-The project can be deployed to various platforms:
-
-### Vercel/Netlify
-```bash
-# Install the CLI
-npm install -g vercel
-
-# Deploy
-vercel
-```
-
-### Docker
-```bash
-# Build Docker image
-docker build -t crisply:latest .
-
-# Run container
-docker run -p 3000:80 crisply:latest
-```
-
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-- All contributors who have helped shape Crisply
-- The open-source community for their valuable tools and libraries
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)

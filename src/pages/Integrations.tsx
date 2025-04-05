@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { Plus, Search, Check, X, ExternalLink } from 'lucide-react';
@@ -21,8 +22,6 @@ interface Integration {
 
 const Integrations = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [integrations, setIntegrations] = useState<Integration[]>([
     {
@@ -137,11 +136,6 @@ const Integrations = () => {
     }
   };
 
-  const handleOpenSettings = (integration: Integration) => {
-    setSelectedIntegration(integration);
-    setIsSettingsOpen(true);
-  };
-
   const filteredIntegrations = integrations.filter(integration => {
     const searchLower = searchTerm.toLowerCase();
     return (
@@ -204,93 +198,27 @@ const Integrations = () => {
             </CardContent>
             <CardFooter className="flex justify-between pt-2 border-t">
               <Button 
-                variant={integration.connected ? "outline" : "default"} 
+                variant={integration.connected ? "destructive" : "default"} 
                 size="sm"
-                className={integration.connected ? "border-green-500 text-green-600 hover:bg-green-50" : ""}
                 onClick={() => toggleConnection(integration.id)}
               >
                 {integration.connected ? (
                   <>
-                    <Check className="h-3 w-3 mr-1" /> Connected
+                    <X className="h-3 w-3 mr-1" /> Disconnect
                   </>
                 ) : (
                   <>
-                    <Plus className="h-3 w-3 mr-1" /> Connect
+                    <Check className="h-3 w-3 mr-1" /> Connect
                   </>
                 )}
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => handleOpenSettings(integration)}
-              >
+              <Button variant="outline" size="sm">
                 <ExternalLink className="h-3 w-3 mr-1" /> Settings
               </Button>
             </CardFooter>
           </Card>
         ))}
       </div>
-
-      {/* Settings Dialog */}
-      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{selectedIntegration?.name} Settings</DialogTitle>
-            <DialogDescription>
-              Configure your integration settings and preferences.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="webhook" className="text-right">
-                Webhook URL
-              </Label>
-              <Input 
-                id="webhook"
-                className="col-span-3" 
-                placeholder="https://your-webhook-url.com"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="apiKey" className="text-right">
-                API Key
-              </Label>
-              <Input 
-                id="apiKey"
-                type="password"
-                className="col-span-3" 
-                placeholder="••••••••••••••••"
-              />
-            </div>
-            <Separator />
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">
-                Notifications
-              </Label>
-              <div className="col-span-3 space-y-2">
-                <div className="flex items-center gap-2">
-                  <input type="checkbox" id="emailNotif" defaultChecked />
-                  <label htmlFor="emailNotif">Email notifications</label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input type="checkbox" id="slackNotif" defaultChecked />
-                  <label htmlFor="slackNotif">Slack notifications</label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsSettingsOpen(false)}>Cancel</Button>
-            <Button onClick={() => {
-              toast({
-                title: "Settings saved",
-                description: "Your integration settings have been updated successfully"
-              });
-              setIsSettingsOpen(false);
-            }}>Save Changes</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-md">
