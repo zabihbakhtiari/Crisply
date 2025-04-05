@@ -18,6 +18,10 @@ import {
   Search
 } from 'lucide-react';
 
+// Add custom CSS variables to properly define sidebar width for responsive design
+document.documentElement.style.setProperty('--sidebar-width', '240px');
+document.documentElement.style.setProperty('--sidebar-width-collapsed', '64px');
+
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
@@ -43,7 +47,7 @@ const Sidebar = () => {
 
   return (
     <aside 
-      className={`h-screen bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300 ${
+      className={`h-full bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300 ${
         collapsed ? 'w-[var(--sidebar-width-collapsed)]' : 'w-[var(--sidebar-width)]'
       }`}
     >
@@ -60,7 +64,7 @@ const Sidebar = () => {
         </button>
       </div>
       
-      <div className="mt-2">
+      <div className="mt-2 overflow-y-auto">
         {mainMenuItems.map((item) => (
           <Link
             key={item.name}
@@ -68,7 +72,7 @@ const Sidebar = () => {
             className={`sidebar-item ${isActive(item.path) ? 'active' : ''}`}
           >
             {item.icon}
-            {!collapsed && <span>{item.name}</span>}
+            {!collapsed && <span className="truncate">{item.name}</span>}
           </Link>
         ))}
       </div>
@@ -82,7 +86,7 @@ const Sidebar = () => {
             className={`sidebar-item ${isActive(item.path) ? 'active' : ''}`}
           >
             {item.icon}
-            {!collapsed && <span>{item.name}</span>}
+            {!collapsed && <span className="truncate">{item.name}</span>}
           </Link>
         ))}
       </div>
@@ -92,7 +96,7 @@ const Sidebar = () => {
           <div className="h-8 w-8 rounded-md flex items-center justify-center bg-sidebar-accent text-sidebar-accent-foreground">
             M
           </div>
-          {!collapsed && <span className="ml-3 text-sm font-medium text-sidebar-foreground">Marketing Team's</span>}
+          {!collapsed && <span className="ml-3 text-sm font-medium text-sidebar-foreground truncate">Marketing Team's</span>}
         </div>
       </div>
     </aside>

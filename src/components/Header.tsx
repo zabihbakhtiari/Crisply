@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, ReactNode } from 'react';
 import { 
   Search, 
   Bell, 
@@ -14,9 +14,10 @@ import { CommandDialog, CommandInput, CommandList, CommandGroup, CommandItem } f
 
 interface HeaderProps {
   title: string;
+  children?: ReactNode;
 }
 
-const Header: React.FC<HeaderProps> = ({ title }) => {
+const Header: React.FC<HeaderProps> = ({ title, children }) => {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
 
   React.useEffect(() => {
@@ -31,17 +32,20 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between h-16 px-6 border-b bg-background border-border">
-      <h1 className="text-xl font-semibold">{title}</h1>
-      
+    <header className="sticky top-0 z-10 flex items-center justify-between h-16 px-4 md:px-6 border-b bg-background border-border">
       <div className="flex items-center gap-2">
+        {children}
+        <h1 className="text-lg md:text-xl font-semibold truncate">{title}</h1>
+      </div>
+      
+      <div className="flex items-center gap-1 md:gap-2">
         <Button
           variant="outline"
           className="hidden md:flex items-center text-sm text-muted-foreground"
           onClick={() => setIsCommandOpen(true)}
         >
           <Search className="w-4 h-4 mr-2" />
-          <span>Search...</span>
+          <span className="hidden lg:inline">Search...</span>
           <kbd className="ml-2 pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 sm:inline-flex">
             <span className="text-xs">⌘</span>K
           </kbd>
@@ -61,19 +65,19 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
         
         <ThemeToggle />
         
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="hidden sm:flex">
           <Bell className="w-5 h-5" />
         </Button>
         
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="hidden md:flex">
           <MessageSquare className="w-5 h-5" />
         </Button>
         
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="hidden lg:flex">
           <HelpCircle className="w-5 h-5" />
         </Button>
         
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" className="hidden lg:flex">
           <Settings className="w-5 h-5" />
         </Button>
         
