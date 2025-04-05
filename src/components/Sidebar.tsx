@@ -43,18 +43,18 @@ const Sidebar = () => {
 
   return (
     <aside 
-      className={`h-screen bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ${
+      className={`h-screen bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300 ${
         collapsed ? 'w-[var(--sidebar-width-collapsed)]' : 'w-[var(--sidebar-width)]'
       }`}
     >
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
         <div className="flex items-center">
-          {!collapsed && <span className="font-bold text-lg">Crisply</span>}
-          {collapsed && <span className="font-bold text-lg">C</span>}
+          {!collapsed && <span className="font-bold text-lg text-sidebar-foreground">Crisply</span>}
+          {collapsed && <span className="font-bold text-lg text-sidebar-foreground">C</span>}
         </div>
         <button 
           onClick={() => setCollapsed(!collapsed)} 
-          className="p-1 rounded-md hover:bg-gray-100"
+          className="p-1 rounded-md hover:bg-sidebar-accent text-sidebar-foreground"
         >
           {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </button>
@@ -73,8 +73,8 @@ const Sidebar = () => {
         ))}
       </div>
       
-      <div className="mt-6 border-t border-gray-200 pt-4">
-        {!collapsed && <p className="px-4 py-1 text-xs font-medium uppercase text-gray-500">Database</p>}
+      <div className="mt-6 border-t border-sidebar-border pt-4">
+        {!collapsed && <p className="px-4 py-1 text-xs font-medium uppercase text-sidebar-foreground/60">Database</p>}
         {databaseMenuItems.map((item) => (
           <Link
             key={item.name}
@@ -87,12 +87,12 @@ const Sidebar = () => {
         ))}
       </div>
       
-      <div className="mt-auto border-t border-gray-200 p-4">
+      <div className="mt-auto border-t border-sidebar-border p-4">
         <div className="flex items-center">
-          <div className="h-8 w-8 rounded-md flex items-center justify-center bg-gray-200 text-gray-700">
+          <div className="h-8 w-8 rounded-md flex items-center justify-center bg-sidebar-accent text-sidebar-accent-foreground">
             M
           </div>
-          {!collapsed && <span className="ml-3 text-sm font-medium">Marketing Team's</span>}
+          {!collapsed && <span className="ml-3 text-sm font-medium text-sidebar-foreground">Marketing Team's</span>}
         </div>
       </div>
     </aside>
