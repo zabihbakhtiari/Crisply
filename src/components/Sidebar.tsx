@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -47,7 +46,7 @@ const Sidebar = () => {
 
   return (
     <aside 
-      className={`h-full bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300 ${
+      className={`h-screen bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300 ${
         collapsed ? 'w-[var(--sidebar-width-collapsed)]' : 'w-[var(--sidebar-width)]'
       }`}
     >

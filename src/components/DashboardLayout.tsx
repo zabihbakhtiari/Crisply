@@ -1,4 +1,3 @@
-
 import React, { ReactNode, useState } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
@@ -22,7 +21,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
   return (
     <div className="flex min-h-screen bg-background">
       {/* Desktop sidebar */}
-      <div className={`${isMobile ? 'hidden' : 'block'}`}>
+      <div className={`${isMobile ? 'hidden' : 'block'} fixed left-0 top-0 z-50`}>
         <Sidebar />
       </div>
       
@@ -35,7 +34,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, title }) =>
         </div>
       )}
       
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className={`flex flex-col flex-1 ${!isMobile ? 'ml-[var(--sidebar-width)]' : ''}`}>
         <Header title={title}>
           {/* Mobile menu button */}
           {isMobile && (

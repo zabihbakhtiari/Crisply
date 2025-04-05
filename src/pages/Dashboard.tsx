@@ -1,9 +1,12 @@
-
 import React from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Activity, Users, DollarSign, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { BarChartComponent } from '@/components/BarChartComponent';
+import { LineChartComponent } from '@/components/LineChartComponent';
+import { PieChartComponent } from '@/components/PieChartComponent';
+import { TaskTrackingChart } from '@/components/TaskTrackingChart';
 
 const Dashboard = () => {
   const stats = [
@@ -110,6 +113,50 @@ const Dashboard = () => {
             </ul>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="mt-8">
+        <LineChartComponent />
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-4">Task Management</h2>
+        <TaskTrackingChart />
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-4">Database Statistics</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <PieChartComponent />
+          <Card>
+            <CardHeader>
+              <CardTitle>Database Overview</CardTitle>
+              <CardDescription>
+                Key metrics and performance indicators
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Total Records</span>
+                  <span className="font-medium">12,345</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Active Users</span>
+                  <span className="font-medium">8,901</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Storage Used</span>
+                  <span className="font-medium">45.2 GB</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">Backup Status</span>
+                  <span className="font-medium text-green-500">Up to date</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </DashboardLayout>
   );
