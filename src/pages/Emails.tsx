@@ -1,14 +1,31 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '../components/DashboardLayout';
-import { Star, StarOff, Paperclip, Archive, Trash2, User } from 'lucide-react';
+import { Star, StarOff, Paperclip, Archive, Trash2, User, Plus, Send, Paperclip as AttachmentIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+
+interface Email {
+  id: number;
+  sender: string;
+  email: string;
+  subject: string;
+  preview: string;
+  time: string;
+  read: boolean;
+  starred: boolean;
+  hasAttachments: boolean;
+}
 
 const Emails = () => {
-  const emails = [
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [emails, setEmails] = useState<Email[]>([
     {
       id: 1,
       sender: 'Alice Johnson',
@@ -64,13 +81,76 @@ const Emails = () => {
       starred: false,
       hasAttachments: true
     }
-  ];
+  ]);
+
+  const [newEmail, setNewEmail] = useState({
+    to: '',
+    subject: '',
+    message: ''
+  });
+  
+  const { toast } = useToast();
+
+  const handleComposeEmail = () => {
+    if (!newEmail.to.trim()) {
+      toast({
+        title: "Recipient required",
+        description: "Please specify a recipient for your email",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!newEmail.subject.trim()) {
+      toast({
+        title: "Subject required",
+        description: "Please add a subject for your email",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Simulate sending an email
+    toast({
+      title: "Email sent",
+      description: "Your email has been sent successfully"
+    });
+
+    setNewEmail({ to: '', subject: '', message: '' });
+    setIsDialogOpen(false);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewEmail((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const toggleStarred = (id: number) => {
+    setEmails(emails.map(email => 
+      email.id === id 
+        ? { ...email, starred: !email.starred } 
+        : email
+    ));
+  };
+
+  const markAsRead = (id: number) => {
+    setEmails(emails.map(email => 
+      email.id === id 
+        ? { ...email, read: true } 
+        : email
+    ));
+  };
 
   return (
     <DashboardLayout title="Emails">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Inbox</h2>
-        <Button>Compose</Button>
+        <Button onClick={() => setIsDialogOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" /> Compose
+        </Button>
       </div>
       
       <div className="flex gap-4">
@@ -122,7 +202,11 @@ const Emails = () => {
             </CardHeader>
             <CardContent>
               {emails.map((email) => (
-                <div key={email.id} className={`p-3 border-b ${!email.read ? 'bg-blue-50' : ''}`}>
+                <div 
+                  key={email.id} 
+                  className={`p-3 border-b ${!email.read ? 'bg-blue-50' : ''} hover:bg-gray-50 cursor-pointer`}
+                  onClick={() => markAsRead(email.id)}
+                >
                   <div className="flex items-center gap-4">
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
@@ -141,15 +225,27 @@ const Emails = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       {email.hasAttachments && <Paperclip size={14} className="text-gray-400" />}
-                      {email.starred ? (
-                        <Star size={14} className="text-yellow-400" />
-                      ) : (
-                        <StarOff size={14} className="text-gray-400" />
-                      )}
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <div onClick={(e) => { e.stopPropagation(); toggleStarred(email.id); }}>
+                        {email.starred ? (
+                          <Star size={14} className="text-yellow-400" />
+                        ) : (
+                          <StarOff size={14} className="text-gray-400" />
+                        )}
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={(e) => { e.stopPropagation(); }}
+                      >
                         <Archive size={14} />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={(e) => { e.stopPropagation(); }}
+                      >
                         <Trash2 size={14} />
                       </Button>
                     </div>
@@ -160,6 +256,68 @@ const Emails = () => {
           </Card>
         </div>
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Compose New Email</DialogTitle>
+            <DialogDescription>
+              Craft your message and send it to your recipients.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="to" className="text-right">
+                To
+              </Label>
+              <Input 
+                id="to" 
+                name="to"
+                value={newEmail.to}
+                onChange={handleInputChange}
+                className="col-span-3" 
+                placeholder="recipient@example.com"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="subject" className="text-right">
+                Subject
+              </Label>
+              <Input 
+                id="subject" 
+                name="subject"
+                value={newEmail.subject}
+                onChange={handleInputChange}
+                className="col-span-3" 
+                placeholder="Email subject"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label htmlFor="message" className="text-right pt-2">
+                Message
+              </Label>
+              <Textarea 
+                id="message" 
+                name="message"
+                value={newEmail.message}
+                onChange={handleInputChange}
+                className="col-span-3" 
+                placeholder="Write your message here..."
+                rows={8}
+              />
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline">
+              <AttachmentIcon className="mr-2 h-4 w-4" /> Attach
+            </Button>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleComposeEmail}>
+              <Send className="mr-2 h-4 w-4" /> Send
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 };
