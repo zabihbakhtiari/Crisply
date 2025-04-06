@@ -20,6 +20,8 @@ import Contacts from "./pages/Contacts";
 import Companies from "./pages/Companies";
 import Integrations from "./pages/Integrations";
 import NotFound from "./pages/NotFound";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 
 const App = () => {
   // Move the queryClient initialization inside the component
@@ -45,6 +47,8 @@ const App = () => {
               <Route path="/companies" element={<Companies />} />
               <Route path="/integrations" element={<Integrations />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/signin" element={<SignIn />} />
+              <Route path="/signup" element={<SignUp />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
