@@ -1,14 +1,31 @@
+
 import React from 'react';
 import DashboardLayout from '../components/DashboardLayout';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Activity, Users, DollarSign, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { BarChartComponent } from '@/components/BarChartComponent';
 import { LineChartComponent } from '@/components/LineChartComponent';
 import { PieChartComponent } from '@/components/PieChartComponent';
 import { TaskTrackingChart } from '@/components/TaskTrackingChart';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Download, Calendar, RefreshCw } from 'lucide-react';
+import { ResponsiveContainer, LineChart as RechartLine, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart as RechartBar, Bar } from 'recharts';
+
+const analyticsData = [
+  { name: 'Jan', users: 400, sessions: 240, pageviews: 800 },
+  { name: 'Feb', users: 300, sessions: 139, pageviews: 500 },
+  { name: 'Mar', users: 200, sessions: 980, pageviews: 1200 },
+  { name: 'Apr', users: 278, sessions: 390, pageviews: 900 },
+  { name: 'May', users: 189, sessions: 480, pageviews: 1000 },
+  { name: 'Jun', users: 239, sessions: 380, pageviews: 1100 },
+  { name: 'Jul', users: 349, sessions: 430, pageviews: 1300 },
+];
 
 const Dashboard = () => {
+  const [timeRange, setTimeRange] = React.useState('7d');
+  
   const stats = [
     { 
       title: 'Total Revenue', 
@@ -73,90 +90,162 @@ const Dashboard = () => {
         ))}
       </div>
       
-      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="col-span-2">
-          <CardHeader>
-            <CardTitle>Overview</CardTitle>
-            <CardDescription>
-              View your monthly analytics and stats
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="h-80 flex items-center justify-center border-t pt-4">
-            <div className="text-center text-muted-foreground">
-              <BarChart className="mx-auto h-16 w-16 mb-2 opacity-50" />
-              <p>Analytics charts would be displayed here</p>
-              <Button variant="outline" className="mt-4">View detailed reports</Button>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="flex justify-between items-center my-6">
+        <h2 className="text-2xl font-semibold">Performance Metrics</h2>
+        <div className="flex items-center gap-2">
+          <Select value={timeRange} onValueChange={setTimeRange}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select time range" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1d">Last 24 hours</SelectItem>
+              <SelectItem value="7d">Last 7 days</SelectItem>
+              <SelectItem value="1m">Last 30 days</SelectItem>
+              <SelectItem value="3m">Last 3 months</SelectItem>
+              <SelectItem value="1y">Last year</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" size="icon">
+            <Calendar className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="icon">
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+          <Button variant="outline">
+            <Download className="mr-2 h-4 w-4" /> Export
+          </Button>
+        </div>
+      </div>
+      
+      <Tabs defaultValue="overview" className="w-full mb-6">
+        <TabsList className="mb-4">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="traffic">Traffic</TabsTrigger>
+          <TabsTrigger value="engagement">Engagement</TabsTrigger>
+          <TabsTrigger value="conversions">Conversions</TabsTrigger>
+        </TabsList>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>
-              Latest updates and notifications
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            <ul className="space-y-4">
-              {[1, 2, 3, 4].map((item) => (
-                <li key={item} className="flex items-center gap-3 border-b pb-3 last:border-0">
-                  <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center">
-                    <Activity size={18} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">New user registered</p>
-                    <p className="text-xs text-muted-foreground">10 minutes ago</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="mt-8">
-        <LineChartComponent />
-      </div>
-
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Task Management</h2>
-        <TaskTrackingChart />
-      </div>
-
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Database Statistics</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          <PieChartComponent />
+        <TabsContent value="overview" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Database Overview</CardTitle>
-              <CardDescription>
-                Key metrics and performance indicators
-              </CardDescription>
+              <CardTitle>User Activity</CardTitle>
+              <CardDescription>User metrics over the selected time period</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Total Records</span>
-                  <span className="font-medium">12,345</span>
+            <CardContent className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <RechartLine
+                  data={analyticsData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="users" stroke="#8884d8" strokeWidth={2} />
+                  <Line type="monotone" dataKey="sessions" stroke="#82ca9d" strokeWidth={2} />
+                </RechartLine>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Top Pages</CardTitle>
+                <CardDescription>Most visited pages</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { page: '/dashboard', views: 3245, percent: 24 },
+                    { page: '/products', views: 2437, percent: 18 },
+                    { page: '/blog/getting-started', views: 1892, percent: 14 },
+                    { page: '/pricing', views: 1654, percent: 12 },
+                    { page: '/about', views: 1298, percent: 10 }
+                  ].map((item, index) => (
+                    <div key={index} className="flex justify-between items-center">
+                      <div>
+                        <div className="font-medium">{item.page}</div>
+                        <div className="text-sm text-gray-500">{item.views.toLocaleString()} views</div>
+                      </div>
+                      <div className="text-sm font-medium">{item.percent}%</div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Active Users</span>
-                  <span className="font-medium">8,901</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Storage Used</span>
-                  <span className="font-medium">45.2 GB</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Backup Status</span>
-                  <span className="font-medium text-green-500">Up to date</span>
-                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Page Views</CardTitle>
+                <CardDescription>Total page views per month</CardDescription>
+              </CardHeader>
+              <CardContent className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartBar
+                    data={analyticsData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="pageviews" fill="#8884d8" />
+                  </RechartBar>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="traffic" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Traffic Sources</CardTitle>
+            </CardHeader>
+            <CardContent className="h-80">
+              <div className="flex items-center justify-center h-full">
+                <p className="text-gray-500">Traffic sources data will be displayed here</p>
               </div>
             </CardContent>
           </Card>
-        </div>
+        </TabsContent>
+        
+        <TabsContent value="engagement" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>User Engagement</CardTitle>
+            </CardHeader>
+            <CardContent className="h-80">
+              <div className="flex items-center justify-center h-full">
+                <p className="text-gray-500">Engagement data will be displayed here</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="conversions" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Conversion Metrics</CardTitle>
+            </CardHeader>
+            <CardContent className="h-80">
+              <div className="flex items-center justify-center h-full">
+                <p className="text-gray-500">Conversion data will be displayed here</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <LineChartComponent />
+        <TaskTrackingChart />
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PieChartComponent />
+        <BarChartComponent />
       </div>
     </DashboardLayout>
   );
