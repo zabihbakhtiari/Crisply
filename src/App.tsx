@@ -50,6 +50,9 @@ const App = () => {
               <Route path="/settings/apps" element={<Settings />} />
               <Route path="/settings/notification" element={<Settings />} />
               <Route path="/settings/language" element={<Settings />} />
+              <Route path="/settings/general" element={<Settings />} />
+              <Route path="/settings/members" element={<Settings />} />
+              <Route path="/settings/billing" element={<Settings />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

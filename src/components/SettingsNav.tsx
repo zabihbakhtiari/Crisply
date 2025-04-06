@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Settings, Users, Bell, Globe, LineChart, UserPlus, CreditCard } from 'lucide-react';
+import { Settings, Users, Bell, Globe, LineChart, UserPlus, CreditCard, Home } from 'lucide-react';
 
 interface NavSection {
   title: string;
@@ -28,7 +28,7 @@ const SettingsNav: React.FC = () => {
     {
       title: 'Workspace Settings',
       items: [
-        { name: 'General', icon: <Settings size={18} />, path: '/settings/general' },
+        { name: 'General', icon: <Home size={18} />, path: '/settings/general' },
         { name: 'Members', icon: <UserPlus size={18} />, path: '/settings/members' },
         { name: 'Billing', icon: <CreditCard size={18} />, path: '/settings/billing' },
       ]

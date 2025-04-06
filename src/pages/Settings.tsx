@@ -8,6 +8,9 @@ import SecuritySection from '../components/SecuritySection';
 import AppsSection from '../components/AppsSection';
 import NotificationSection from '../components/NotificationSection';
 import LanguageSection from '../components/LanguageSection';
+import WorkspaceGeneralSection from '../components/WorkspaceGeneralSection';
+import WorkspaceMembersSection from '../components/WorkspaceMembersSection';
+import WorkspaceBillingSection from '../components/WorkspaceBillingSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Settings = () => {
@@ -24,6 +27,12 @@ const Settings = () => {
       setActiveTab('notification');
     } else if (path.includes('/settings/language')) {
       setActiveTab('language');
+    } else if (path.includes('/settings/general')) {
+      setActiveTab('general');
+    } else if (path.includes('/settings/members')) {
+      setActiveTab('members');
+    } else if (path.includes('/settings/billing')) {
+      setActiveTab('billing');
     } else {
       setActiveTab('account');
     }
@@ -52,6 +61,9 @@ const Settings = () => {
               <TabsTrigger value="apps">Apps</TabsTrigger>
               <TabsTrigger value="notification">Notification</TabsTrigger>
               <TabsTrigger value="language">Language & Region</TabsTrigger>
+              <TabsTrigger value="general">Workspace</TabsTrigger>
+              <TabsTrigger value="members">Members</TabsTrigger>
+              <TabsTrigger value="billing">Billing</TabsTrigger>
             </TabsList>
             
             <TabsContent value="account" className="space-y-6">
@@ -69,6 +81,18 @@ const Settings = () => {
             
             <TabsContent value="language">
               <LanguageSection />
+            </TabsContent>
+
+            <TabsContent value="general">
+              <WorkspaceGeneralSection />
+            </TabsContent>
+
+            <TabsContent value="members">
+              <WorkspaceMembersSection />
+            </TabsContent>
+
+            <TabsContent value="billing">
+              <WorkspaceBillingSection />
             </TabsContent>
           </Tabs>
         </div>
