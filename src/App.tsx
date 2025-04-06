@@ -47,6 +47,9 @@ const App = () => {
               <Route path="/companies" element={<Companies />} />
               <Route path="/integrations" element={<Integrations />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/settings/apps" element={<Settings />} />
+              <Route path="/settings/notification" element={<Settings />} />
+              <Route path="/settings/language" element={<Settings />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
