@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -14,8 +15,12 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  Search
+  Search,
+  User,
+  HelpCircle,
+  MessageSquare
 } from 'lucide-react';
+import { useSidebar } from '@/contexts/SidebarContext';
 
 // Add custom CSS variables to properly define sidebar width for responsive design
 document.documentElement.style.setProperty('--sidebar-width', '240px');
@@ -24,13 +29,24 @@ document.documentElement.style.setProperty('--sidebar-width-collapsed', '64px');
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const { activeSection, navigateToSection } = useSidebar();
   
   const mainMenuItems = [
     { name: 'Dashboard', icon: <BarChart2 size={20} />, path: '/' },
-    { name: 'Notifications', icon: <Bell size={20} />, path: '/notifications' },
+    { 
+      name: 'Notifications', 
+      icon: <Bell size={20} />, 
+      path: '/notifications',
+      section: 'notifications' as const
+    },
     { name: 'Notes', icon: <FileText size={20} />, path: '/notes' },
     { name: 'Tasks', icon: <Clipboard size={20} />, path: '/tasks' },
-    { name: 'Emails', icon: <Mail size={20} />, path: '/emails' },
+    { 
+      name: 'Emails', 
+      icon: <Mail size={20} />, 
+      path: '/emails',
+      section: 'messages' as const
+    },
     { name: 'Calendars', icon: <Calendar size={20} />, path: '/calendars' },
   ];
 
@@ -39,10 +55,41 @@ const Sidebar = () => {
     { name: 'Contacts', icon: <Users size={20} />, path: '/contacts' },
     { name: 'Companies', icon: <Building size={20} />, path: '/companies' },
     { name: 'Integrations', icon: <Box size={20} />, path: '/integrations' },
-    { name: 'Settings', icon: <Settings size={20} />, path: '/settings' },
+    { 
+      name: 'Settings', 
+      icon: <Settings size={20} />, 
+      path: '/settings',
+      section: 'settings' as const
+    },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const helpMenuItems = [
+    { 
+      name: 'Help & Support', 
+      icon: <HelpCircle size={20} />, 
+      path: '/',
+      section: 'help' as const
+    },
+    { 
+      name: 'Messages', 
+      icon: <MessageSquare size={20} />, 
+      path: '/emails',
+      section: 'messages' as const
+    },
+    { 
+      name: 'Profile', 
+      icon: <User size={20} />, 
+      path: '/settings',
+      section: 'profile' as const
+    },
+  ];
+
+  const isActive = (item: any) => {
+    if (item.section && item.section === activeSection) {
+      return true;
+    }
+    return location.pathname === item.path;
+  };
 
   return (
     <aside 
@@ -68,7 +115,8 @@ const Sidebar = () => {
           <Link
             key={item.name}
             to={item.path}
-            className={`sidebar-item ${isActive(item.path) ? 'active' : ''}`}
+            onClick={() => item.section && navigateToSection(item.section)}
+            className={`sidebar-item ${isActive(item) ? 'active' : ''}`}
           >
             {item.icon}
             {!collapsed && <span className="truncate">{item.name}</span>}
@@ -82,7 +130,23 @@ const Sidebar = () => {
           <Link
             key={item.name}
             to={item.path}
-            className={`sidebar-item ${isActive(item.path) ? 'active' : ''}`}
+            onClick={() => item.section && navigateToSection(item.section)}
+            className={`sidebar-item ${isActive(item) ? 'active' : ''}`}
+          >
+            {item.icon}
+            {!collapsed && <span className="truncate">{item.name}</span>}
+          </Link>
+        ))}
+      </div>
+      
+      <div className="mt-auto border-t border-sidebar-border pt-4">
+        {!collapsed && <p className="px-4 py-1 text-xs font-medium uppercase text-sidebar-foreground/60">Quick Access</p>}
+        {helpMenuItems.map((item) => (
+          <Link
+            key={item.name}
+            to={item.path}
+            onClick={() => item.section && navigateToSection(item.section)}
+            className={`sidebar-item ${isActive(item) ? 'active' : ''}`}
           >
             {item.icon}
             {!collapsed && <span className="truncate">{item.name}</span>}

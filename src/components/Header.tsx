@@ -11,6 +11,13 @@ import {
 import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { CommandDialog, CommandInput, CommandList, CommandGroup, CommandItem } from '@/components/ui/command';
+import { useSidebar } from '@/contexts/SidebarContext';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface HeaderProps {
   title: string;
@@ -19,6 +26,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title, children }) => {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
+  const { navigateToSection } = useSidebar();
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -65,25 +73,85 @@ const Header: React.FC<HeaderProps> = ({ title, children }) => {
         
         <ThemeToggle />
         
-        <Button variant="ghost" size="icon" className="hidden sm:flex">
-          <Bell className="w-5 h-5" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="hidden sm:flex" 
+                onClick={() => navigateToSection('notifications')}
+              >
+                <Bell className="w-5 h-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Notifications</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         
-        <Button variant="ghost" size="icon" className="hidden md:flex">
-          <MessageSquare className="w-5 h-5" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="hidden md:flex" 
+                onClick={() => navigateToSection('messages')}
+              >
+                <MessageSquare className="w-5 h-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Messages</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         
-        <Button variant="ghost" size="icon" className="hidden lg:flex">
-          <HelpCircle className="w-5 h-5" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="hidden lg:flex" 
+                onClick={() => navigateToSection('help')}
+              >
+                <HelpCircle className="w-5 h-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Help</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         
-        <Button variant="ghost" size="icon" className="hidden lg:flex">
-          <Settings className="w-5 h-5" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="hidden lg:flex" 
+                onClick={() => navigateToSection('settings')}
+              >
+                <Settings className="w-5 h-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Settings</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         
-        <Button variant="ghost" size="icon" className="rounded-full">
-          <User className="w-5 h-5" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full" 
+                onClick={() => navigateToSection('profile')}
+              >
+                <User className="w-5 h-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Profile</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </header>
   );
