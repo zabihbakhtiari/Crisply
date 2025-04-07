@@ -1,21 +1,34 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle sign in logic here
-    console.log({ email, password, rememberMe });
+    setIsLoading(true);
+    
+    try {
+      const { error } = await signIn(email, password);
+      if (!error) {
+        // Redirect to dashboard on successful sign in
+        navigate('/dashboard');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -64,8 +77,8 @@ export default function SignIn() {
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
-              <Button type="submit" className="w-full">
-                Sign in
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Signing in..." : "Sign in"}
               </Button>
               <div className="text-sm text-center text-muted-foreground">
                 Don't have an account?{" "}
@@ -93,4 +106,4 @@ export default function SignIn() {
       </div>
     </div>
   );
-} 
+}

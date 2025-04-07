@@ -5,63 +5,37 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from '@/components/ui/button';
-
-interface NotificationSetting {
-  id: string;
-  title: string;
-  description: string;
-  enabled: boolean;
-}
+import { useNotificationSettings } from '@/hooks/use-notification-settings';
 
 const NotificationSection: React.FC = () => {
   const { toast } = useToast();
-  const [settings, setSettings] = React.useState<NotificationSetting[]>([
-    {
-      id: 'email',
-      title: 'Email Notifications',
-      description: 'Receive email notifications for important updates',
-      enabled: true,
-    },
-    {
-      id: 'push',
-      title: 'Push Notifications',
-      description: 'Receive push notifications on your device',
-      enabled: true,
-    },
-    {
-      id: 'mentions',
-      title: 'Mentions',
-      description: 'Get notified when someone mentions you',
-      enabled: true,
-    },
-    {
-      id: 'reminders',
-      title: 'Task Reminders',
-      description: 'Get reminded about your upcoming tasks',
-      enabled: false,
-    },
-    {
-      id: 'updates',
-      title: 'Product Updates',
-      description: 'Get notified about new features and updates',
-      enabled: true,
-    },
-  ]);
+  const { settings, loading, updateSetting } = useNotificationSettings();
+  
+  const getSettingValue = (type: string): boolean => {
+    const setting = settings.find(s => s.type === type);
+    return setting ? setting.enabled : false;
+  };
 
-  const toggleSetting = (id: string) => {
-    setSettings(
-      settings.map((setting) => 
-        setting.id === id ? { ...setting, enabled: !setting.enabled } : setting
-      )
+  const handleToggleSetting = async (type: string) => {
+    const currentValue = getSettingValue(type);
+    await updateSetting(type, !currentValue);
+  };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Notification Preferences</CardTitle>
+          <CardDescription>Loading your notification settings...</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-center items-center h-40">
+            <p>Loading...</p>
+          </div>
+        </CardContent>
+      </Card>
     );
-  };
-
-  const saveSettings = () => {
-    toast({
-      title: "Settings saved",
-      description: "Your notification preferences have been updated.",
-    });
-  };
+  }
 
   return (
     <Card>
@@ -72,23 +46,26 @@ const NotificationSection: React.FC = () => {
       <CardContent>
         <div className="space-y-6">
           {settings.map((setting) => (
-            <div key={setting.id} className="flex items-center justify-between">
+            <div key={setting.type} className="flex items-center justify-between">
               <div>
-                <Label htmlFor={setting.id} className="font-medium">
-                  {setting.title}
+                <Label htmlFor={setting.type} className="font-medium">
+                  {setting.type.charAt(0).toUpperCase() + setting.type.slice(1)} Notifications
                 </Label>
-                <p className="text-sm text-gray-500">{setting.description}</p>
+                <p className="text-sm text-gray-500">
+                  {setting.type === 'email' && "Receive email notifications for important updates"}
+                  {setting.type === 'push' && "Receive push notifications on your device"}
+                  {setting.type === 'mentions' && "Get notified when someone mentions you"}
+                  {setting.type === 'reminders' && "Get reminded about your upcoming tasks"}
+                  {setting.type === 'updates' && "Get notified about new features and updates"}
+                </p>
               </div>
               <Switch 
-                id={setting.id} 
+                id={setting.type} 
                 checked={setting.enabled} 
-                onCheckedChange={() => toggleSetting(setting.id)}
+                onCheckedChange={() => handleToggleSetting(setting.type)}
               />
             </div>
           ))}
-        </div>
-        <div className="mt-6 flex justify-end">
-          <Button onClick={saveSettings}>Save Preferences</Button>
         </div>
       </CardContent>
     </Card>

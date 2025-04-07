@@ -1,29 +1,56 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/hooks/use-toast";
+import { useWorkspaceSettings } from '@/hooks/use-workspace-settings';
 
 const WorkspaceGeneralSection: React.FC = () => {
   const { toast } = useToast();
-  const [workspaceName, setWorkspaceName] = useState('My Workspace');
-  const [workspaceUrl, setWorkspaceUrl] = useState('my-workspace');
+  const { workspaceSettings, loading, updateWorkspaceSettings } = useWorkspaceSettings();
+  const [workspaceName, setWorkspaceName] = useState('');
+  const [workspaceUrl, setWorkspaceUrl] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const handleSave = () => {
+  useEffect(() => {
+    if (workspaceSettings) {
+      setWorkspaceName(workspaceSettings.workspace_name);
+      setWorkspaceUrl(workspaceSettings.workspace_url);
+    }
+  }, [workspaceSettings]);
+
+  const handleSave = async () => {
     setSaving(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setSaving(false);
-      toast({
-        title: "Settings saved",
-        description: "Your workspace settings have been updated successfully.",
+    try {
+      await updateWorkspaceSettings({
+        workspace_name: workspaceName,
+        workspace_url: workspaceUrl,
       });
-    }, 1000);
+    } catch (error) {
+      console.error('Error saving workspace settings:', error);
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Workspace Settings</CardTitle>
+          <CardDescription>Loading your workspace settings...</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-center items-center h-40">
+            <p>Loading...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
