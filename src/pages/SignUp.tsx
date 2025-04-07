@@ -65,7 +65,20 @@ export default function SignUp() {
           description: "Please check your email to verify your account",
         });
         navigate('/signin');
+      } else {
+        toast({
+          title: "Sign up failed",
+          description: error.message || "An unexpected error occurred",
+          variant: "destructive"
+        });
       }
+    } catch (error: any) {
+      console.error("Sign up error:", error);
+      toast({
+        title: "Sign up failed",
+        description: error.message || "Failed to connect to authentication service",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
