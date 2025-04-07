@@ -1,11 +1,13 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -15,6 +17,10 @@ export default function SignUp() {
     confirmPassword: "",
     agreeToTerms: false,
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -24,10 +30,45 @@ export default function SignUp() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle sign up logic here
     console.log(formData);
+    
+    // Validate form
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Passwords don't match",
+        description: "Please make sure your passwords match",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!formData.agreeToTerms) {
+      toast({
+        title: "Terms agreement required",
+        description: "Please agree to the Terms of Service and Privacy Policy",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      const { error } = await signUp(formData.email, formData.password);
+      
+      if (!error) {
+        // On successful signup, navigate to signin page
+        toast({
+          title: "Account created",
+          description: "Please check your email to verify your account",
+        });
+        navigate('/signin');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -110,8 +151,8 @@ export default function SignUp() {
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
-              <Button type="submit" className="w-full">
-                Create Account
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Creating Account..." : "Create Account"}
               </Button>
               <div className="text-sm text-center text-muted-foreground">
                 Already have an account?{" "}
@@ -140,4 +181,4 @@ export default function SignUp() {
       </div>
     </div>
   );
-} 
+}
