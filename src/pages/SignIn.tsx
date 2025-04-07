@@ -7,6 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -15,6 +18,7 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,10 +26,27 @@ export default function SignIn() {
     
     try {
       const { error } = await signIn(email, password);
+      
       if (!error) {
         // Redirect to dashboard on successful sign in
         navigate('/dashboard');
+      } else {
+        // If the error message contains "not configured", show a special message
+        if (error.message?.includes("not configured")) {
+          toast({
+            title: "Supabase not configured",
+            description: "Please integrate Supabase to enable authentication",
+            variant: "destructive"
+          });
+        }
       }
+    } catch (error: any) {
+      console.error("Sign in error:", error);
+      toast({
+        title: "Sign in failed",
+        description: error.message || "Failed to connect to authentication service",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }
@@ -42,6 +63,19 @@ export default function SignIn() {
               Enter your email and password to access your account
             </CardDescription>
           </CardHeader>
+          
+          {!import.meta.env.VITE_SUPABASE_URL && (
+            <div className="px-6">
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Supabase not configured</AlertTitle>
+                <AlertDescription>
+                  Authentication requires Supabase integration. Please click the Supabase button in the top right corner to configure it.
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               <div className="space-y-2">

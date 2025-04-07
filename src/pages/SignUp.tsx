@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -66,11 +68,20 @@ export default function SignUp() {
         });
         navigate('/signin');
       } else {
-        toast({
-          title: "Sign up failed",
-          description: error.message || "An unexpected error occurred",
-          variant: "destructive"
-        });
+        // If the error message contains "not configured", show a special message
+        if (error.message?.includes("not configured")) {
+          toast({
+            title: "Supabase not configured",
+            description: "Please integrate Supabase to enable authentication",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Sign up failed",
+            description: error.message || "An unexpected error occurred",
+            variant: "destructive"
+          });
+        }
       }
     } catch (error: any) {
       console.error("Sign up error:", error);
@@ -95,6 +106,19 @@ export default function SignUp() {
               Enter your information to create your account
             </CardDescription>
           </CardHeader>
+          
+          {!import.meta.env.VITE_SUPABASE_URL && (
+            <div className="px-6">
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Supabase not configured</AlertTitle>
+                <AlertDescription>
+                  Authentication requires Supabase integration. Please click the Supabase button in the top right corner to configure it.
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               <div className="space-y-2">

@@ -10,13 +10,36 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error("Supabase environment variables are not defined.");
   console.info("Please make sure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your environment.");
+  console.info("You can integrate Supabase by clicking the Supabase button in the top right corner.");
 }
 
-// Create a single supabase client for interacting with the database
-export const supabase = createClient(
-  supabaseUrl || '',
-  supabaseAnonKey || ''
-);
+// Create a mock client or real client depending on environment variables
+export const supabase = (supabaseUrl && supabaseAnonKey) 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : {
+      auth: {
+        signUp: () => Promise.resolve({ error: { message: "Supabase is not configured" } }),
+        signInWithPassword: () => Promise.resolve({ error: { message: "Supabase is not configured" } }),
+        signOut: () => Promise.resolve({}),
+        getSession: () => Promise.resolve({ data: { session: null } }),
+        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      },
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            single: () => Promise.resolve({ data: null, error: null }),
+          }),
+          insert: () => ({
+            select: () => ({
+              single: () => Promise.resolve({ data: null, error: null }),
+            }),
+          }),
+          update: () => ({
+            eq: () => Promise.resolve({ error: null }),
+          }),
+        }),
+      }),
+    };
 
 // Types
 export type UserProfile = {
