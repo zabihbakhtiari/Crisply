@@ -3,12 +3,12 @@ import { createClient } from '@supabase/supabase-js';
 
 // Get Supabase URL and key from environment variables
 // These will be available via the Supabase integration
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 // Check if required environment variables are defined
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error("Supabase environment variables are not defined.");
+  console.warn("Supabase environment variables are not defined.");
   console.info("Please make sure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your environment.");
   console.info("You can integrate Supabase by clicking the Supabase button in the top right corner.");
 }
@@ -28,14 +28,6 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
         select: () => ({
           eq: () => ({
             single: () => Promise.resolve({ data: null, error: null }),
-          }),
-          insert: () => ({
-            select: () => ({
-              single: () => Promise.resolve({ data: null, error: null }),
-            }),
-          }),
-          update: () => ({
-            eq: () => Promise.resolve({ error: null }),
           }),
         }),
       }),
