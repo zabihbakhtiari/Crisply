@@ -65,7 +65,7 @@ const Dashboard = () => {
     <DashboardLayout title="Dashboard">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => (
-          <Card key={index}>
+          <Card key={index} className="dark:bg-card dark:border-border">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 {stat.title}
@@ -94,10 +94,10 @@ const Dashboard = () => {
         <h2 className="text-2xl font-semibold">Performance Metrics</h2>
         <div className="flex items-center gap-2">
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] dark:bg-card dark:border-border">
               <SelectValue placeholder="Select time range" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="dark:bg-card dark:border-border">
               <SelectItem value="1d">Last 24 hours</SelectItem>
               <SelectItem value="7d">Last 7 days</SelectItem>
               <SelectItem value="1m">Last 30 days</SelectItem>
@@ -105,28 +105,28 @@ const Dashboard = () => {
               <SelectItem value="1y">Last year</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" className="dark:bg-card dark:border-border dark:hover:bg-accent">
             <Calendar className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" className="dark:bg-card dark:border-border dark:hover:bg-accent">
             <RefreshCw className="h-4 w-4" />
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" className="dark:bg-card dark:border-border dark:hover:bg-accent">
             <Download className="mr-2 h-4 w-4" /> Export
           </Button>
         </div>
       </div>
       
       <Tabs defaultValue="overview" className="w-full mb-6">
-        <TabsList className="mb-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="traffic">Traffic</TabsTrigger>
-          <TabsTrigger value="engagement">Engagement</TabsTrigger>
-          <TabsTrigger value="conversions">Conversions</TabsTrigger>
+        <TabsList className="mb-4 dark:bg-card dark:border dark:border-border">
+          <TabsTrigger value="overview" className="dark:data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground">Overview</TabsTrigger>
+          <TabsTrigger value="traffic" className="dark:data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground">Traffic</TabsTrigger>
+          <TabsTrigger value="engagement" className="dark:data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground">Engagement</TabsTrigger>
+          <TabsTrigger value="conversions" className="dark:data-[state=active]:bg-primary dark:data-[state=active]:text-primary-foreground">Conversions</TabsTrigger>
         </TabsList>
         
         <TabsContent value="overview" className="space-y-4">
-          <Card>
+          <Card className="dark:bg-card dark:border-border">
             <CardHeader>
               <CardTitle>User Activity</CardTitle>
               <CardDescription>User metrics over the selected time period</CardDescription>
@@ -137,19 +137,48 @@ const Dashboard = () => {
                   data={analyticsData}
                   margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="users" stroke="#8884d8" strokeWidth={2} />
-                  <Line type="monotone" dataKey="sessions" stroke="#82ca9d" strokeWidth={2} />
+                  <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+                  <XAxis 
+                    dataKey="name" 
+                    stroke="var(--foreground)" 
+                    tick={{ fill: "var(--muted-foreground)" }}
+                  />
+                  <YAxis 
+                    stroke="var(--foreground)" 
+                    tick={{ fill: "var(--muted-foreground)" }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: "var(--card)",
+                      borderColor: "var(--border)",
+                      color: "var(--foreground)"
+                    }}
+                    itemStyle={{ color: "var(--foreground)" }}
+                    labelStyle={{ color: "var(--foreground)" }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="users" 
+                    stroke="var(--chart-1)" 
+                    strokeWidth={2} 
+                    dot={{ fill: "var(--chart-1)" }}
+                    activeDot={{ r: 6, fill: "var(--chart-1)" }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="sessions" 
+                    stroke="var(--chart-2)" 
+                    strokeWidth={2} 
+                    dot={{ fill: "var(--chart-2)" }}
+                    activeDot={{ r: 6, fill: "var(--chart-2)" }}
+                  />
                 </RechartLine>
               </ResponsiveContainer>
             </CardContent>
           </Card>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card>
+            <Card className="dark:bg-card dark:border-border">
               <CardHeader>
                 <CardTitle>Top Pages</CardTitle>
                 <CardDescription>Most visited pages</CardDescription>
@@ -166,7 +195,7 @@ const Dashboard = () => {
                     <div key={index} className="flex justify-between items-center">
                       <div>
                         <div className="font-medium">{item.page}</div>
-                        <div className="text-sm text-gray-500">{item.views.toLocaleString()} views</div>
+                        <div className="text-sm text-muted-foreground">{item.views.toLocaleString()} views</div>
                       </div>
                       <div className="text-sm font-medium">{item.percent}%</div>
                     </div>
@@ -175,7 +204,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="dark:bg-card dark:border-border">
               <CardHeader>
                 <CardTitle>Page Views</CardTitle>
                 <CardDescription>Total page views per month</CardDescription>
@@ -186,11 +215,30 @@ const Dashboard = () => {
                     data={analyticsData}
                     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                   >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="pageviews" fill="#8884d8" />
+                    <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+                    <XAxis 
+                      dataKey="name" 
+                      stroke="var(--foreground)" 
+                      tick={{ fill: "var(--muted-foreground)" }}
+                    />
+                    <YAxis 
+                      stroke="var(--foreground)" 
+                      tick={{ fill: "var(--muted-foreground)" }}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: "var(--card)",
+                        borderColor: "var(--border)",
+                        color: "var(--foreground)"
+                      }}
+                      itemStyle={{ color: "var(--foreground)" }}
+                      labelStyle={{ color: "var(--foreground)" }}
+                    />
+                    <Bar 
+                      dataKey="pageviews" 
+                      fill="var(--chart-3)"
+                      radius={[4, 4, 0, 0]}
+                    />
                   </RechartBar>
                 </ResponsiveContainer>
               </CardContent>
@@ -199,39 +247,39 @@ const Dashboard = () => {
         </TabsContent>
         
         <TabsContent value="traffic" className="space-y-4">
-          <Card>
+          <Card className="dark:bg-card dark:border-border">
             <CardHeader>
               <CardTitle>Traffic Sources</CardTitle>
             </CardHeader>
             <CardContent className="h-80">
               <div className="flex items-center justify-center h-full">
-                <p className="text-gray-500">Traffic sources data will be displayed here</p>
+                <p className="text-muted-foreground">Traffic sources data will be displayed here</p>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
         
         <TabsContent value="engagement" className="space-y-4">
-          <Card>
+          <Card className="dark:bg-card dark:border-border">
             <CardHeader>
               <CardTitle>User Engagement</CardTitle>
             </CardHeader>
             <CardContent className="h-80">
               <div className="flex items-center justify-center h-full">
-                <p className="text-gray-500">Engagement data will be displayed here</p>
+                <p className="text-muted-foreground">Engagement data will be displayed here</p>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
         
         <TabsContent value="conversions" className="space-y-4">
-          <Card>
+          <Card className="dark:bg-card dark:border-border">
             <CardHeader>
               <CardTitle>Conversion Metrics</CardTitle>
             </CardHeader>
             <CardContent className="h-80">
               <div className="flex items-center justify-center h-full">
-                <p className="text-gray-500">Conversion data will be displayed here</p>
+                <p className="text-muted-foreground">Conversion data will be displayed here</p>
               </div>
             </CardContent>
           </Card>
