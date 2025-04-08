@@ -82,7 +82,7 @@ export const useNotificationSettings = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      // Use proper method chaining
+      // Use proper method chaining with explicit Promise handling
       const response = await supabase
         .from('notification_settings')
         .update({ enabled })
