@@ -24,11 +24,15 @@ export const useProfile = () => {
       setLoading(true);
       
       // Check if profile exists
-      const { data, error } = await supabase
+      const response = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', user?.id)
         .single();
+      
+      // Use optional chaining to safely access properties
+      const data = response?.data;
+      const error = response?.error;
       
       if (error && error.code !== 'PGRST116') {
         throw error;
@@ -45,10 +49,13 @@ export const useProfile = () => {
           email: user?.email || '',
         };
         
-        const { data: createdProfile, error: createError } = await supabase
+        const insertResponse = await supabase
           .from('profiles')
           .insert([newProfile])
           .select();
+        
+        const createdProfile = insertResponse?.data;
+        const createError = insertResponse?.error;
         
         if (createError) throw createError;
         
@@ -76,10 +83,12 @@ export const useProfile = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      const { error } = await supabase
+      const updateResponse = await supabase
         .from('profiles')
-        .update(updates)
-        .eq('user_id', user.id);
+        .update(updates);
+      
+      const response = updateResponse.eq('user_id', user.id);
+      const error = response?.error;
       
       if (error) throw error;
       

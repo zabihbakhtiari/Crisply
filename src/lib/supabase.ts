@@ -13,7 +13,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.info("You can integrate Supabase by clicking the Supabase button in the top right corner.");
 }
 
-// Mock response objects
+// Mock response objects with proper structure
 const mockResponse = {
   data: null,
   error: null,
@@ -35,20 +35,29 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
       },
       from: (table: string) => ({
         select: (columns: string = '*') => ({
-          eq: (column: string, value: any) => ({
-            single: () => Promise.resolve({ ...mockResponse }),
-          }),
+          eq: (column: string, value: any) => {
+            // Return a properly structured response that would match what Supabase would do
+            return {
+              single: () => Promise.resolve({ ...mockResponse }),
+              // Add other methods that might be expected
+              then: (callback: Function) => callback({ ...mockResponse }),
+            };
+          },
           single: () => Promise.resolve({ ...mockResponse }),
         }),
-        insert: (values: any) => ({
-          select: (columns: string = '*') => ({
-            single: () => Promise.resolve({ ...mockResponse }),
-          }),
-        }),
-        update: (values: any) => ({
-          eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
-          match: (criteria: any) => Promise.resolve({ ...mockResponse }),
-        }),
+        insert: (values: any) => {
+          return {
+            select: (columns: string = '*') => {
+              return Promise.resolve({ ...mockResponse });
+            }
+          };
+        },
+        update: (values: any) => {
+          return {
+            eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
+            match: (criteria: any) => Promise.resolve({ ...mockResponse }),
+          };
+        },
         delete: () => ({
           eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
           match: (criteria: any) => Promise.resolve({ ...mockResponse }),
