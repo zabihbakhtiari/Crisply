@@ -82,7 +82,7 @@ export const useNotificationSettings = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      // Fix the method chaining to match our mock implementation
+      // Update notification settings using proper method chaining
       const response = await supabase
         .from('notification_settings')
         .update({ enabled })

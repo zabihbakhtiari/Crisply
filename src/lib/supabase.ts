@@ -13,24 +13,15 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.info("You can integrate Supabase by clicking the Supabase button in the top right corner.");
 }
 
-// Standard mock response
-const mockResponse = {
-  data: null,
-  error: null,
-  status: 200,
-  statusText: "OK",
-  count: null,
-};
-
 // Create a mock client or real client depending on environment variables
 export const supabase = (supabaseUrl && supabaseAnonKey) 
   ? createClient(supabaseUrl, supabaseAnonKey)
   : {
       auth: {
-        signUp: () => Promise.resolve({ error: { message: "Supabase is not configured" } }),
-        signInWithPassword: () => Promise.resolve({ error: { message: "Supabase is not configured" } }),
-        signOut: () => Promise.resolve({}),
-        getSession: () => Promise.resolve({ data: { session: null } }),
+        signUp: () => Promise.resolve({ error: { message: "Supabase is not configured" }, data: null }),
+        signInWithPassword: () => Promise.resolve({ error: { message: "Supabase is not configured" }, data: null }),
+        signOut: () => Promise.resolve({ error: null }),
+        getSession: () => Promise.resolve({ data: { session: null }, error: null }),
         onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
       },
       from: (table: string) => {
@@ -39,29 +30,75 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
             return {
               eq: (column: string, value: any) => {
                 return {
-                  single: () => Promise.resolve({ ...mockResponse }),
+                  single: () => Promise.resolve({
+                    data: null,
+                    error: null,
+                    status: 200,
+                    statusText: "OK",
+                    count: null,
+                  }),
                 };
               },
-              single: () => Promise.resolve({ ...mockResponse }),
+              single: () => Promise.resolve({
+                data: null,
+                error: null,
+                status: 200,
+                statusText: "OK",
+                count: null,
+              }),
             };
           },
           insert: (values: any) => {
             return {
-              select: (columns: string = '*') => Promise.resolve({ ...mockResponse })
+              select: (columns: string = '*') => Promise.resolve({
+                data: null,
+                error: null,
+                status: 200,
+                statusText: "OK",
+                count: null,
+              })
             };
           },
           update: (values: any) => {
             return {
               eq: (column: string, value: any) => {
                 return {
-                  eq: (column2: string, value2: any) => Promise.resolve({ ...mockResponse }),
+                  eq: (column2: string, value2: any) => Promise.resolve({
+                    data: null,
+                    error: null,
+                    status: 200,
+                    statusText: "OK",
+                    count: null,
+                  }),
+                  // For single column condition
+                  single: () => Promise.resolve({
+                    data: null,
+                    error: null,
+                    status: 200,
+                    statusText: "OK",
+                    count: null,
+                  }),
                 };
               },
+              // Direct promise for just update
+              then: (onfulfilled: any) => Promise.resolve({
+                data: null,
+                error: null,
+                status: 200,
+                statusText: "OK",
+                count: null,
+              }).then(onfulfilled),
             };
           },
           delete: () => {
             return {
-              eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
+              eq: (column: string, value: any) => Promise.resolve({
+                data: null,
+                error: null,
+                status: 200,
+                statusText: "OK",
+                count: null,
+              }),
             };
           },
         };

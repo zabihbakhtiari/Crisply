@@ -82,7 +82,7 @@ export const useWorkspaceSettings = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      // Fix the method chaining to match our mock implementation
+      // Update workspace settings using proper method chaining
       const response = await supabase
         .from('workspace_settings')
         .update(updates)
