@@ -23,16 +23,16 @@ export const useWorkspaceSettings = () => {
     try {
       setLoading(true);
       
-      if (!user) throw new Error('No user logged in');
+      if (!user) {
+        setLoading(false);
+        return;
+      }
       
-      const response = await supabase
+      const { data, error } = await supabase
         .from('workspace_settings')
         .select('*')
         .eq('user_id', user.id)
         .single();
-      
-      const data = response?.data;
-      const error = response?.error;
       
       if (error && error.code !== 'PGRST116') {
         throw error;
@@ -48,13 +48,10 @@ export const useWorkspaceSettings = () => {
           workspace_url: 'my-workspace',
         };
         
-        const insertResponse = await supabase
+        const { data: createdSettings, error: createError } = await supabase
           .from('workspace_settings')
           .insert([defaultSettings])
           .select();
-        
-        const createdSettings = insertResponse?.data;
-        const createError = insertResponse?.error;
         
         if (createError) throw createError;
         
@@ -82,13 +79,11 @@ export const useWorkspaceSettings = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      // Update workspace settings using proper method chaining
-      const response = await supabase
+      // Update workspace settings
+      const { error } = await supabase
         .from('workspace_settings')
         .update(updates)
         .eq('user_id', user.id);
-      
-      const error = response?.error;
       
       if (error) throw error;
       

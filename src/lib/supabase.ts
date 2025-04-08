@@ -13,6 +13,15 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.info("You can integrate Supabase by clicking the Supabase button in the top right corner.");
 }
 
+// Type for mock Supabase response
+type MockSupabaseResponse = {
+  data: any;
+  error: any;
+  status: number;
+  statusText: string;
+  count: any;
+};
+
 // Create a mock client or real client depending on environment variables
 export const supabase = (supabaseUrl && supabaseAnonKey) 
   ? createClient(supabaseUrl, supabaseAnonKey)
@@ -25,80 +34,48 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
         onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
       },
       from: (table: string) => {
+        const mockResponse = (): Promise<MockSupabaseResponse> => 
+          Promise.resolve({
+            data: null,
+            error: null,
+            status: 200,
+            statusText: "OK",
+            count: null,
+          });
+
         return {
           select: (columns: string = '*') => {
             return {
               eq: (column: string, value: any) => {
                 return {
-                  single: () => Promise.resolve({
-                    data: null,
-                    error: null,
-                    status: 200,
-                    statusText: "OK",
-                    count: null,
-                  }),
+                  single: () => mockResponse(),
+                  eq: (column2: string, value2: any) => mockResponse()
                 };
               },
-              single: () => Promise.resolve({
-                data: null,
-                error: null,
-                status: 200,
-                statusText: "OK",
-                count: null,
-              }),
+              single: () => mockResponse(),
             };
           },
           insert: (values: any) => {
             return {
-              select: (columns: string = '*') => Promise.resolve({
-                data: null,
-                error: null,
-                status: 200,
-                statusText: "OK",
-                count: null,
-              })
+              select: (columns: string = '*') => mockResponse(),
             };
           },
           update: (values: any) => {
             return {
               eq: (column: string, value: any) => {
-                return {
-                  eq: (column2: string, value2: any) => Promise.resolve({
-                    data: null,
-                    error: null,
-                    status: 200,
-                    statusText: "OK",
-                    count: null,
-                  }),
-                  // For single column condition
-                  single: () => Promise.resolve({
-                    data: null,
-                    error: null,
-                    status: 200,
-                    statusText: "OK",
-                    count: null,
-                  }),
-                };
+                return Promise.resolve({
+                  data: null,
+                  error: null,
+                  status: 200,
+                  statusText: "OK",
+                  count: null,
+                });
               },
-              // Direct promise for just update
-              then: (onfulfilled: any) => Promise.resolve({
-                data: null,
-                error: null,
-                status: 200,
-                statusText: "OK",
-                count: null,
-              }).then(onfulfilled),
             };
           },
           delete: () => {
             return {
-              eq: (column: string, value: any) => Promise.resolve({
-                data: null,
-                error: null,
-                status: 200,
-                statusText: "OK",
-                count: null,
-              }),
+              eq: (column: string, value: any) => mockResponse(),
             };
           },
         };

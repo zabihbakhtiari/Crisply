@@ -23,17 +23,17 @@ export const useNotificationSettings = () => {
     try {
       setLoading(true);
       
-      if (!user) throw new Error('No user logged in');
+      if (!user) {
+        setLoading(false);
+        return;
+      }
       
       // First check if settings exist
-      const response = await supabase
+      const { data, error } = await supabase
         .from('notification_settings')
         .select('*')
         .eq('user_id', user.id)
         .single();
-      
-      const data = response?.data;
-      const error = response?.error;
       
       if (error && error.code !== 'PGRST116') {
         throw error;
@@ -52,13 +52,10 @@ export const useNotificationSettings = () => {
           { user_id: user.id, type: 'updates', enabled: true },
         ];
         
-        const insertResponse = await supabase
+        const { data: createdSettings, error: createError } = await supabase
           .from('notification_settings')
           .insert(defaultSettings)
           .select();
-        
-        const createdSettings = insertResponse?.data;
-        const createError = insertResponse?.error;
         
         if (createError) throw createError;
         
@@ -82,14 +79,12 @@ export const useNotificationSettings = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      // Update notification settings using proper method chaining
-      const response = await supabase
+      // Update notification settings
+      const { error } = await supabase
         .from('notification_settings')
         .update({ enabled })
         .eq('user_id', user.id)
         .eq('type', type);
-      
-      const error = response?.error;
       
       if (error) throw error;
       

@@ -23,15 +23,17 @@ export const useProfile = () => {
     try {
       setLoading(true);
       
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+      
       // Check if profile exists
-      const response = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .single();
-      
-      const data = response?.data;
-      const error = response?.error;
       
       if (error && error.code !== 'PGRST116') {
         throw error;
@@ -42,19 +44,16 @@ export const useProfile = () => {
       } else {
         // Create a new profile if one doesn't exist
         const newProfile: Partial<UserProfile> = {
-          user_id: user?.id,
+          user_id: user.id,
           first_name: '',
           last_name: '',
           email: user?.email || '',
         };
         
-        const insertResponse = await supabase
+        const { data: createdProfile, error: createError } = await supabase
           .from('profiles')
           .insert([newProfile])
           .select();
-        
-        const createdProfile = insertResponse?.data;
-        const createError = insertResponse?.error;
         
         if (createError) throw createError;
         
@@ -82,13 +81,11 @@ export const useProfile = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      // Update profile using the proper method chaining
-      const response = await supabase
+      // Update profile
+      const { error } = await supabase
         .from('profiles')
         .update(updates)
         .eq('user_id', user.id);
-      
-      const error = response?.error;
       
       if (error) throw error;
       
