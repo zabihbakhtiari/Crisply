@@ -30,7 +30,6 @@ export const useProfile = () => {
         .eq('user_id', user?.id)
         .single();
       
-      // Use optional chaining to safely access properties
       const data = response?.data;
       const error = response?.error;
       
@@ -83,11 +82,12 @@ export const useProfile = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      const updateResponse = await supabase
+      // Fixed the chaining of methods
+      const response = await supabase
         .from('profiles')
-        .update(updates);
+        .update(updates)
+        .eq('user_id', user.id);
       
-      const response = updateResponse.eq('user_id', user.id);
       const error = response?.error;
       
       if (error) throw error;

@@ -36,10 +36,8 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
       from: (table: string) => ({
         select: (columns: string = '*') => ({
           eq: (column: string, value: any) => {
-            // Return a properly structured response that would match what Supabase would do
             return {
               single: () => Promise.resolve({ ...mockResponse }),
-              // Add other methods that might be expected
               then: (callback: Function) => callback({ ...mockResponse }),
             };
           },
@@ -53,6 +51,7 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
           };
         },
         update: (values: any) => {
+          // Return an object that has the eq method
           return {
             eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
             match: (criteria: any) => Promise.resolve({ ...mockResponse }),

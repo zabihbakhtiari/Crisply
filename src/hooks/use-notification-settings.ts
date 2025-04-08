@@ -32,7 +32,6 @@ export const useNotificationSettings = () => {
         .eq('user_id', user.id)
         .single();
       
-      // Use optional chaining to safely access properties
       const data = response?.data;
       const error = response?.error;
       
@@ -83,13 +82,10 @@ export const useNotificationSettings = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      // Update the setting
-      const updateResponse = await supabase
+      // Update the setting - fixed the chaining of methods
+      const response = await supabase
         .from('notification_settings')
-        .update({ enabled });
-      
-      // Apply the condition after the update call
-      const response = updateResponse
+        .update({ enabled })
         .eq('user_id', user.id)
         .eq('type', type);
       
