@@ -82,7 +82,7 @@ export const useWorkspaceSettings = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      // First filter by user_id, then update with the provided updates
+      // Update with proper method chaining
       const response = await supabase
         .from('workspace_settings')
         .update(updates)

@@ -82,7 +82,7 @@ export const useNotificationSettings = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      // First filter by user_id, then by type, then update the enabled value
+      // Use proper method chaining
       const response = await supabase
         .from('notification_settings')
         .update({ enabled })

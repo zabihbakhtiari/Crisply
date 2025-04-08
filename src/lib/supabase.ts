@@ -51,10 +51,12 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
           };
         },
         update: (values: any) => {
-          return {
+          // Create an object with chainable methods that all return promises
+          const updateChain = {
             eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
             match: (criteria: any) => Promise.resolve({ ...mockResponse }),
           };
+          return updateChain;
         },
         delete: () => ({
           eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
