@@ -22,6 +22,15 @@ const mockResponse = {
   count: null,
 };
 
+// Type for PostgrestBuilder-like objects
+type MockBuilder = {
+  select: (columns?: string) => MockBuilder;
+  eq: (column: string, value: any) => MockBuilder;
+  match: (criteria: any) => Promise<typeof mockResponse>;
+  single: () => Promise<typeof mockResponse>;
+  then: (callback: Function) => any;
+};
+
 // Create a mock client or real client depending on environment variables
 export const supabase = (supabaseUrl && supabaseAnonKey) 
   ? createClient(supabaseUrl, supabaseAnonKey)
@@ -33,42 +42,46 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
         getSession: () => Promise.resolve({ data: { session: null } }),
         onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
       },
-      from: (table: string) => ({
-        select: (columns: string = '*') => ({
-          eq: (column: string, value: any) => {
+      from: (table: string) => {
+        // Base mock builder with chainable methods
+        const createMockBuilder = (): MockBuilder => {
+          const builder: any = {
+            select: () => builder,
+            eq: () => builder,
+            match: () => Promise.resolve({ ...mockResponse }),
+            single: () => Promise.resolve({ ...mockResponse }),
+            then: (callback: Function) => callback({ ...mockResponse }),
+          };
+          return builder;
+        };
+
+        return {
+          select: (columns: string = '*') => {
             return {
+              eq: (column: string, value: any) => {
+                const builder = createMockBuilder();
+                return builder;
+              },
               single: () => Promise.resolve({ ...mockResponse }),
-              then: (callback: Function) => callback({ ...mockResponse }),
             };
           },
-          single: () => Promise.resolve({ ...mockResponse }),
-        }),
-        insert: (values: any) => {
-          return {
-            select: (columns: string = '*') => {
-              return Promise.resolve({ ...mockResponse });
-            }
-          };
-        },
-        update: (values: any) => {
-          const updateObj = {
-            eq: (column: string, value: any) => {
-              // Return a proper Promise that resolves with mockResponse
-              const result = Promise.resolve({ ...mockResponse });
-              
-              // Make this promise also have chainable methods if needed
-              return result;
-            },
-            match: (criteria: any) => Promise.resolve({ ...mockResponse }),
-          };
-          
-          return updateObj;
-        },
-        delete: () => ({
-          eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
-          match: (criteria: any) => Promise.resolve({ ...mockResponse }),
-        }),
-      }),
+          insert: (values: any) => {
+            return {
+              select: (columns: string = '*') => {
+                return Promise.resolve({ ...mockResponse });
+              }
+            };
+          },
+          update: (values: any) => {
+            const builder = createMockBuilder();
+            return builder;
+          },
+          delete: () => {
+            const builder = createMockBuilder();
+            return builder;
+          },
+        };
+      },
     };
 
 // Types
