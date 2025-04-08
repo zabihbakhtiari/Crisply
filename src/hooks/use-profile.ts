@@ -82,7 +82,7 @@ export const useProfile = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      // Fixed the chaining of methods
+      // First filter by user_id, then update with the provided updates
       const response = await supabase
         .from('profiles')
         .update(updates)
