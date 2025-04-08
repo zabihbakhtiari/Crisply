@@ -51,19 +51,10 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
           };
         },
         update: (values: any) => {
-          // Return an object with eq method that can be further chained
-          const updateBuilder = {
-            eq: (column: string, value: any) => {
-              // Return an object that also has eq method for further chaining
-              return {
-                eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
-                match: (criteria: any) => Promise.resolve({ ...mockResponse }),
-                then: (callback: Function) => callback({ ...mockResponse }),
-              };
-            },
+          return {
+            eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
             match: (criteria: any) => Promise.resolve({ ...mockResponse }),
           };
-          return updateBuilder;
         },
         delete: () => ({
           eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
