@@ -82,7 +82,7 @@ export const useProfile = () => {
       
       if (!user) throw new Error('No user logged in');
       
-      // Update with proper method chaining and explicit Promise handling
+      // Fix method chaining to match our mock implementation
       const response = await supabase
         .from('profiles')
         .update(updates)
