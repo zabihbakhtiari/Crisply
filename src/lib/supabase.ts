@@ -13,6 +13,15 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.info("You can integrate Supabase by clicking the Supabase button in the top right corner.");
 }
 
+// Mock response objects
+const mockResponse = {
+  data: null,
+  error: null,
+  status: 200,
+  statusText: "OK",
+  count: null,
+};
+
 // Create a mock client or real client depending on environment variables
 export const supabase = (supabaseUrl && supabaseAnonKey) 
   ? createClient(supabaseUrl, supabaseAnonKey)
@@ -24,11 +33,25 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
         getSession: () => Promise.resolve({ data: { session: null } }),
         onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
       },
-      from: () => ({
-        select: () => ({
-          eq: () => ({
-            single: () => Promise.resolve({ data: null, error: null }),
+      from: (table: string) => ({
+        select: (columns: string = '*') => ({
+          eq: (column: string, value: any) => ({
+            single: () => Promise.resolve({ ...mockResponse }),
           }),
+          single: () => Promise.resolve({ ...mockResponse }),
+        }),
+        insert: (values: any) => ({
+          select: (columns: string = '*') => ({
+            single: () => Promise.resolve({ ...mockResponse }),
+          }),
+        }),
+        update: (values: any) => ({
+          eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
+          match: (criteria: any) => Promise.resolve({ ...mockResponse }),
+        }),
+        delete: () => ({
+          eq: (column: string, value: any) => Promise.resolve({ ...mockResponse }),
+          match: (criteria: any) => Promise.resolve({ ...mockResponse }),
         }),
       }),
     };

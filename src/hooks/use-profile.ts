@@ -48,12 +48,15 @@ export const useProfile = () => {
         const { data: createdProfile, error: createError } = await supabase
           .from('profiles')
           .insert([newProfile])
-          .select()
-          .single();
+          .select();
         
         if (createError) throw createError;
         
-        setProfile(createdProfile as UserProfile);
+        const profile = Array.isArray(createdProfile) && createdProfile.length > 0 
+          ? createdProfile[0] 
+          : createdProfile;
+          
+        setProfile(profile as UserProfile);
       }
     } catch (error: any) {
       console.error('Error fetching profile:', error);

@@ -28,12 +28,15 @@ export const useNotificationSettings = () => {
       const { data, error } = await supabase
         .from('notification_settings')
         .select('*')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .single();
       
-      if (error) throw error;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
       
-      if (data && data.length > 0) {
-        setSettings(data as NotificationSetting[]);
+      if (data) {
+        setSettings(Array.isArray(data) ? data : [data] as NotificationSetting[]);
       } else {
         // Create default notification settings if none exist
         const defaultSettings = [
@@ -51,7 +54,7 @@ export const useNotificationSettings = () => {
         
         if (createError) throw createError;
         
-        setSettings(createdSettings as NotificationSetting[]);
+        setSettings(Array.isArray(createdSettings) ? createdSettings : [createdSettings] as NotificationSetting[]);
       }
     } catch (error: any) {
       console.error('Error fetching notification settings:', error);

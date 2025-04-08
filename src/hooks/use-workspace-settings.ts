@@ -48,12 +48,15 @@ export const useWorkspaceSettings = () => {
         const { data: createdSettings, error: createError } = await supabase
           .from('workspace_settings')
           .insert([defaultSettings])
-          .select()
-          .single();
+          .select();
         
         if (createError) throw createError;
         
-        setWorkspaceSettings(createdSettings as WorkspaceSetting);
+        const settings = Array.isArray(createdSettings) && createdSettings.length > 0 
+          ? createdSettings[0] 
+          : createdSettings;
+          
+        setWorkspaceSettings(settings as WorkspaceSetting);
       }
     } catch (error: any) {
       console.error('Error fetching workspace settings:', error);
