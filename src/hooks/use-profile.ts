@@ -57,11 +57,14 @@ export const useProfile = () => {
         
         if (createError) throw createError;
         
-        const profile = Array.isArray(createdProfile) && createdProfile.length > 0 
-          ? createdProfile[0] 
-          : createdProfile;
-          
-        setProfile(profile as UserProfile);
+        // Extract profile data from response
+        if (createdProfile) {
+          const profile = Array.isArray(createdProfile) && createdProfile.length > 0 
+            ? createdProfile[0] 
+            : createdProfile;
+            
+          setProfile(profile as UserProfile);
+        }
       }
     } catch (error: any) {
       console.error('Error fetching profile:', error);
