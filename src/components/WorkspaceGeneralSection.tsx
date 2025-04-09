@@ -9,7 +9,7 @@ import { useWorkspaceSettings } from '@/hooks/use-workspace-settings';
 
 const WorkspaceGeneralSection: React.FC = () => {
   const { toast } = useToast();
-  const { workspaceSettings, loading, updateWorkspaceSettings } = useWorkspaceSettings();
+  const { workspaceSettings, isLoading, updateWorkspaceSettings } = useWorkspaceSettings();
   const [workspaceName, setWorkspaceName] = useState('');
   const [workspaceUrl, setWorkspaceUrl] = useState('');
   const [saving, setSaving] = useState(false);
@@ -36,7 +36,7 @@ const WorkspaceGeneralSection: React.FC = () => {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader>
