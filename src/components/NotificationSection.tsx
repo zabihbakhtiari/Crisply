@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from '@/components/ui/button';
 import { useNotificationSettings } from '@/hooks/use-notification-settings';
 
 const NotificationSection: React.FC = () => {
@@ -22,7 +21,7 @@ const NotificationSection: React.FC = () => {
 
   const handleToggleSetting = async (type: string) => {
     const currentValue = getSettingValue(type);
-    await updateSetting({ type, enabled: !currentValue });
+    await updateSetting({ id: type, enabled: !currentValue });
   };
 
   if (loading) {
