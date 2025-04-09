@@ -9,7 +9,7 @@ import { useProfile } from '@/hooks/use-profile';
 import { useAuth } from '@/contexts/AuthContext';
 
 const ProfileSection: React.FC = () => {
-  const { profile, loading: profileLoading, updateProfile } = useProfile();
+  const { profile, isLoading: profileLoading, updateProfile } = useProfile();
   const { user } = useAuth();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');

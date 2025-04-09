@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,8 +7,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Eye, EyeOff, Mail, Lock, C } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Mail, Lock, CircleUser } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import CrisplyLogo from "@/components/CrisplyLogo";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
@@ -60,10 +60,7 @@ export default function SignIn() {
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 lg:p-8">
         <div className="mb-8">
           <h1 className="text-2xl font-bold mb-2 flex items-center">
-            <span className="bg-blue-600 text-white p-1 rounded-md mr-2">
-              <C className="h-5 w-5" />
-            </span>
-            Crisply
+            <CrisplyLogo size={20} />
           </h1>
         </div>
 
@@ -180,15 +177,13 @@ export default function SignIn() {
         </div>
       </div>
 
-      {/* 3D Visual side */}
-      <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-800 rounded-l-3xl">
+      {/* Gradient Visual side - replacing the image */}
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-l-3xl">
         <div className="p-8 max-w-md text-center">
           <div className="mb-8">
-            <img 
-              src="/lovable-uploads/4c26281c-8cf2-46b4-b3c8-7b0ec7ca31c7.png" 
-              alt="3D visualization" 
-              className="w-full h-auto"
-            />
+            <div className="w-full h-64 rounded-lg bg-gradient-to-tr from-blue-400 via-indigo-400 to-purple-500 shadow-2xl flex items-center justify-center">
+              <CircleUser className="h-32 w-32 text-white/90" />
+            </div>
           </div>
           <h2 className="text-3xl font-bold text-white mb-4">Welcome Back</h2>
           <p className="text-white/80">

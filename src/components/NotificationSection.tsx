@@ -9,7 +9,11 @@ import { useNotificationSettings } from '@/hooks/use-notification-settings';
 
 const NotificationSection: React.FC = () => {
   const { toast } = useToast();
-  const { settings, loading, updateSetting } = useNotificationSettings();
+  const { 
+    notificationSettings: settings, 
+    isLoading: loading, 
+    updateNotificationSetting: updateSetting 
+  } = useNotificationSettings();
   
   const getSettingValue = (type: string): boolean => {
     const setting = settings.find(s => s.type === type);
@@ -18,7 +22,7 @@ const NotificationSection: React.FC = () => {
 
   const handleToggleSetting = async (type: string) => {
     const currentValue = getSettingValue(type);
-    await updateSetting(type, !currentValue);
+    await updateSetting({ type, enabled: !currentValue });
   };
 
   if (loading) {
