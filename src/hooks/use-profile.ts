@@ -44,6 +44,7 @@ export const useProfile = () => {
       } else {
         // Create a new profile if one doesn't exist
         const newProfile: Partial<UserProfile> = {
+          id: user.id,
           user_id: user.id,
           first_name: '',
           last_name: '',
@@ -58,12 +59,8 @@ export const useProfile = () => {
         if (createError) throw createError;
         
         // Extract profile data from response
-        if (createdProfile) {
-          const profile = Array.isArray(createdProfile) && createdProfile.length > 0 
-            ? createdProfile[0] 
-            : createdProfile;
-            
-          setProfile(profile as UserProfile);
+        if (createdProfile && Array.isArray(createdProfile) && createdProfile.length > 0) {
+          setProfile(createdProfile[0] as UserProfile);
         }
       }
     } catch (error: any) {

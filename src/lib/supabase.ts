@@ -1,6 +1,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { supabase as integratedSupabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 
 // Type definitions for consistent interface
 export type UserProfile = {

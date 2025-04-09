@@ -55,11 +55,9 @@ export const useWorkspaceSettings = () => {
         
         if (createError) throw createError;
         
-        const settings = Array.isArray(createdSettings) && createdSettings.length > 0 
-          ? createdSettings[0] 
-          : createdSettings;
-          
-        setWorkspaceSettings(settings as WorkspaceSetting);
+        if (createdSettings && Array.isArray(createdSettings) && createdSettings.length > 0) {
+          setWorkspaceSettings(createdSettings[0] as WorkspaceSetting);
+        }
       }
     } catch (error: any) {
       console.error('Error fetching workspace settings:', error);
