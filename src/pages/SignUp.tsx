@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Eye, EyeOff, Mail, Lock, User } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Mail, Lock, User, C } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function SignUp() {
@@ -107,8 +107,10 @@ export default function SignUp() {
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-4 lg:p-8">
         <div className="mb-8">
           <h1 className="text-2xl font-bold mb-2 flex items-center">
-            <span className="bg-blue-600 text-white p-1 rounded-md mr-2">CB</span>
-            AppName
+            <span className="bg-blue-600 text-white p-1 rounded-md mr-2">
+              <C className="h-5 w-5" />
+            </span>
+            Crisply
           </h1>
         </div>
 

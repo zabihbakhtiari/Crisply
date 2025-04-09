@@ -1,113 +1,127 @@
 
-import { useState, useEffect } from 'react';
-import { supabase, WorkspaceSetting } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase, WorkspaceSetting, TABLES } from '@/lib/supabase';
 import { useToast } from './use-toast';
 
 export const useWorkspaceSettings = () => {
   const { user } = useAuth();
-  const [workspaceSettings, setWorkspaceSettings] = useState<WorkspaceSetting | null>(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (user) {
-      fetchWorkspaceSettings();
-    } else {
-      setWorkspaceSettings(null);
-      setLoading(false);
-    }
-  }, [user]);
+  const fetchWorkspaceSettings = async (): Promise<WorkspaceSetting | null> => {
+    if (!user) return null;
 
-  const fetchWorkspaceSettings = async () => {
-    try {
-      setLoading(true);
-      
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-      
-      const { data, error } = await supabase
-        .from('workspace_settings')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
-      
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
-      
-      if (data) {
-        setWorkspaceSettings(data as WorkspaceSetting);
-      } else {
-        // Create default workspace settings if none exist
-        const defaultSettings = {
-          user_id: user.id,
-          workspace_name: 'My Workspace',
-          workspace_url: 'my-workspace',
-        };
-        
-        const { data: createdSettings, error: createError } = await supabase
-          .from('workspace_settings')
-          .insert([defaultSettings])
-          .select();
-        
-        if (createError) throw createError;
-        
-        if (createdSettings && Array.isArray(createdSettings) && createdSettings.length > 0) {
-          setWorkspaceSettings(createdSettings[0] as WorkspaceSetting);
-        }
-      }
-    } catch (error: any) {
+    const { data, error } = await supabase
+      .from(TABLES.WORKSPACE_SETTINGS)
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
       console.error('Error fetching workspace settings:', error);
-      toast({
-        title: "Error fetching workspace settings",
-        description: error.message,
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
+      throw new Error(error.message);
+    }
+
+    return data as WorkspaceSetting || null;
+  };
+
+  const createDefaultWorkspace = async (): Promise<WorkspaceSetting> => {
+    if (!user) throw new Error('User not authenticated');
+
+    const newWorkspace = {
+      user_id: user.id,
+      workspace_name: 'My Workspace',
+      workspace_url: 'my-workspace',
+    };
+
+    const { error } = await supabase
+      .from(TABLES.WORKSPACE_SETTINGS)
+      .upsert([newWorkspace as any]);
+
+    if (error) {
+      console.error('Error creating default workspace:', error);
+      throw new Error(error.message);
+    }
+
+    // Fetch the created workspace to return it
+    const { data, error: fetchError } = await supabase
+      .from(TABLES.WORKSPACE_SETTINGS)
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    if (fetchError) {
+      console.error('Error fetching created workspace:', fetchError);
+      throw new Error(fetchError.message);
+    }
+
+    return data as WorkspaceSetting;
+  };
+
+  const updateWorkspaceSettings = async (settings: Partial<WorkspaceSetting>): Promise<void> => {
+    if (!user) throw new Error('User not authenticated');
+
+    const { error } = await supabase
+      .from(TABLES.WORKSPACE_SETTINGS)
+      .update(settings as any)
+      .eq('user_id', user.id);
+
+    if (error) {
+      console.error('Error updating workspace settings:', error);
+      throw new Error(error.message);
     }
   };
 
-  const updateWorkspaceSettings = async (updates: Partial<WorkspaceSetting>) => {
-    try {
-      setLoading(true);
-      
-      if (!user) throw new Error('No user logged in');
-      
-      // Update workspace settings
-      const { error } = await supabase
-        .from('workspace_settings')
-        .update(updates)
-        .eq('user_id', user.id);
-      
-      if (error) throw error;
-      
-      // Update the local state
-      setWorkspaceSettings(prev => prev ? { ...prev, ...updates } : null);
-      
+  const workspaceSettingsQuery = useQuery({
+    queryKey: ['workspace-settings', user?.id],
+    queryFn: fetchWorkspaceSettings,
+    enabled: !!user,
+  });
+
+  const createDefaultWorkspaceMutation = useMutation({
+    mutationFn: createDefaultWorkspace,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workspace-settings', user?.id] });
       toast({
-        title: "Workspace settings updated",
-        description: "Your workspace settings have been updated successfully",
+        title: 'Workspace created',
+        description: 'Your default workspace has been created.',
       });
-    } catch (error: any) {
-      console.error('Error updating workspace settings:', error);
+    },
+    onError: (error: Error) => {
       toast({
-        title: "Error updating workspace settings",
+        title: 'Error creating workspace',
         description: error.message,
-        variant: "destructive"
+        variant: 'destructive',
       });
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
+
+  const updateWorkspaceSettingsMutation = useMutation({
+    mutationFn: updateWorkspaceSettings,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['workspace-settings', user?.id] });
+      toast({
+        title: 'Workspace updated',
+        description: 'Your workspace settings have been updated.',
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Error updating workspace',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
 
   return {
-    workspaceSettings,
-    loading,
-    updateWorkspaceSettings,
-    refreshWorkspaceSettings: fetchWorkspaceSettings,
+    workspaceSettings: workspaceSettingsQuery.data,
+    isLoading: workspaceSettingsQuery.isLoading,
+    error: workspaceSettingsQuery.error,
+    createDefaultWorkspace: createDefaultWorkspaceMutation.mutate,
+    updateWorkspaceSettings: updateWorkspaceSettingsMutation.mutate,
+    isCreating: createDefaultWorkspaceMutation.isPending,
+    isUpdating: updateWorkspaceSettingsMutation.isPending,
   };
 };

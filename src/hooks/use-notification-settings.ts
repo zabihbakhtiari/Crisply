@@ -1,128 +1,122 @@
 
-import { useState, useEffect } from 'react';
-import { supabase, NotificationSetting } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase, NotificationSetting, TABLES } from '@/lib/supabase';
 import { useToast } from './use-toast';
 
 export const useNotificationSettings = () => {
   const { user } = useAuth();
-  const [settings, setSettings] = useState<NotificationSetting[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (user) {
-      fetchSettings();
-    } else {
-      setSettings([]);
-      setLoading(false);
-    }
-  }, [user]);
+  const fetchNotificationSettings = async (): Promise<NotificationSetting[]> => {
+    if (!user) return [];
 
-  const fetchSettings = async () => {
-    try {
-      setLoading(true);
-      
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-      
-      // First check if settings exist
-      const { data, error } = await supabase
-        .from('notification_settings')
-        .select('*')
-        .eq('user_id', user.id);
-      
-      if (error) {
-        throw error;
-      }
-      
-      if (data && data.length > 0) {
-        // Handle the data
-        setSettings(data as NotificationSetting[]);
-      } else {
-        // Create default notification settings if none exist
-        const defaultSettings = [
-          { user_id: user.id, type: 'email', enabled: true },
-          { user_id: user.id, type: 'push', enabled: true },
-          { user_id: user.id, type: 'mentions', enabled: true },
-          { user_id: user.id, type: 'reminders', enabled: false },
-          { user_id: user.id, type: 'updates', enabled: true },
-        ];
-        
-        const { data: createdSettings, error: createError } = await supabase
-          .from('notification_settings')
-          .insert(defaultSettings)
-          .select();
-        
-        if (createError) throw createError;
-        
-        if (createdSettings) {
-          setSettings(Array.isArray(createdSettings) ? createdSettings : [createdSettings] as NotificationSetting[]);
-        }
-      }
-    } catch (error: any) {
+    const { data, error } = await supabase
+      .from(TABLES.NOTIFICATION_SETTINGS)
+      .select('*')
+      .eq('user_id', user.id);
+
+    if (error) {
       console.error('Error fetching notification settings:', error);
-      toast({
-        title: "Error fetching settings",
-        description: error.message,
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
+      throw new Error(error.message);
+    }
+
+    return data as NotificationSetting[];
+  };
+
+  const createDefaultSettings = async (): Promise<NotificationSetting[]> => {
+    if (!user) throw new Error('User not authenticated');
+
+    // Default notification types
+    const defaultTypes = ['email', 'push', 'in_app'];
+    
+    const newSettings = defaultTypes.map(type => ({
+      user_id: user.id,
+      type,
+      enabled: true,
+    }));
+
+    const { error } = await supabase
+      .from(TABLES.NOTIFICATION_SETTINGS)
+      .upsert(newSettings as any);
+
+    if (error) {
+      console.error('Error creating default notification settings:', error);
+      throw new Error(error.message);
+    }
+
+    // Fetch the created settings to return them
+    return fetchNotificationSettings();
+  };
+
+  const updateNotificationSetting = async (
+    settingId: string,
+    enabled: boolean
+  ): Promise<void> => {
+    if (!user) throw new Error('User not authenticated');
+
+    const { error } = await supabase
+      .from(TABLES.NOTIFICATION_SETTINGS)
+      .update({ enabled } as any)
+      .eq('id', settingId);
+
+    if (error) {
+      console.error('Error updating notification setting:', error);
+      throw new Error(error.message);
     }
   };
 
-  const updateSetting = async (type: string, enabled: boolean) => {
-    try {
-      setLoading(true);
-      
-      if (!user) throw new Error('No user logged in');
-      
-      // First find the specific setting by type
-      const settingToUpdate = settings.find(s => s.type === type);
-      
-      if (!settingToUpdate) {
-        throw new Error(`Setting type '${type}' not found`);
-      }
-      
-      // Update notification settings
-      const { error } = await supabase
-        .from('notification_settings')
-        .update({ enabled })
-        .eq('user_id', user.id)
-        .eq('type', type);
-      
-      if (error) throw error;
-      
-      // Update the local state
-      setSettings(prevSettings => 
-        prevSettings.map(setting => 
-          setting.type === type ? { ...setting, enabled } : setting
-        )
-      );
-      
+  const notificationSettingsQuery = useQuery({
+    queryKey: ['notification-settings', user?.id],
+    queryFn: fetchNotificationSettings,
+    enabled: !!user,
+  });
+
+  const createDefaultSettingsMutation = useMutation({
+    mutationFn: createDefaultSettings,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notification-settings', user?.id] });
       toast({
-        title: "Setting updated",
-        description: `${type} notifications ${enabled ? 'enabled' : 'disabled'}`,
+        title: 'Notification settings created',
+        description: 'Default notification settings have been created.',
       });
-    } catch (error: any) {
-      console.error('Error updating notification setting:', error);
+    },
+    onError: (error: Error) => {
       toast({
-        title: "Error updating setting",
+        title: 'Error creating notification settings',
         description: error.message,
-        variant: "destructive"
+        variant: 'destructive',
       });
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
+
+  const updateNotificationSettingMutation = useMutation({
+    mutationFn: ({ id, enabled }: { id: string; enabled: boolean }) =>
+      updateNotificationSetting(id, enabled),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notification-settings', user?.id] });
+      toast({
+        title: 'Notification setting updated',
+        description: 'Your notification preference has been updated.',
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'Error updating notification setting',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
 
   return {
-    settings,
-    loading,
-    updateSetting,
-    refreshSettings: fetchSettings,
+    notificationSettings: notificationSettingsQuery.data || [],
+    isLoading: notificationSettingsQuery.isLoading,
+    error: notificationSettingsQuery.error,
+    createDefaultSettings: createDefaultSettingsMutation.mutate,
+    updateNotificationSetting: updateNotificationSettingMutation.mutate,
+    isCreating: createDefaultSettingsMutation.isPending,
+    isUpdating: updateNotificationSettingMutation.isPending,
   };
 };

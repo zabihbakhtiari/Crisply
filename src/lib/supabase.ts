@@ -31,3 +31,10 @@ export type WorkspaceSetting = {
 
 // Use the integrated Supabase client
 export const supabase = integratedSupabase;
+
+// Type-safe table names
+export const TABLES = {
+  PROFILES: 'profiles',
+  NOTIFICATION_SETTINGS: 'notification_settings',
+  WORKSPACE_SETTINGS: 'workspace_settings'
+} as const;
